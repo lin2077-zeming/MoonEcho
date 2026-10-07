@@ -1,0 +1,34 @@
+///|
+fn main {
+  let samples = try! @mspectrum.sine_wave(
+    length=1024,
+    sample_rate=8000.0,
+    frequency=440.0,
+  )
+  let buffer = try! @audio.audio_buffer(1, 8000, samples)
+  let spectrum_config = try! @analysis.SpectrumConfig::new(
+    window_length=256,
+    hop_size=128,
+    window_kind=@mspectrum.Hann,
+  )
+  let spectrogram = try! @analysis.spectrogram(buffer, spectrum_config)
+  let peak_config = try! @analysis.PeakConfig::new(
+    frequency_radius=2,
+    time_radius=0,
+    min_magnitude=0.1,
+    max_peaks_per_frame=2,
+  )
+  let peaks = try! @analysis.extract_peaks(spectrogram, peak_config)
+  let fingerprint = try! @fp.fingerprint(
+    peaks,
+    @fp.HashConfig::new(),
+    frame_count=spectrogram.magnitudes.length(),
+    bin_count=spectrogram.frequencies.length(),
+  )
+  let encoded = try! @fp.encode(fingerprint)
+  let decoded = try! @fp.decode(encoded)
+  println("Fingerprint v1 example")
+  println("peaks: \{peaks.length()}")
+  println("hashes: \{decoded.hashes.length()}")
+  println("encoded_bytes: \{encoded.length()}")
+}

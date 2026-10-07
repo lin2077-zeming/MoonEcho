@@ -1,0 +1,59 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "lin2077-zeming/moonecho/src/fingerprint"
+
+import {
+  "lin2077-zeming/moonecho/src/spectrum",
+}
+
+// Values
+pub fn decode(Bytes) -> AudioFingerprint raise FingerprintError
+
+pub fn encode(AudioFingerprint) -> Bytes raise FingerprintError
+
+pub fn error_message(FingerprintError) -> String
+
+pub fn fingerprint(Array[@spectrum.SpectralPeak], HashConfig, frame_count~ : Int, bin_count~ : Int) -> AudioFingerprint raise FingerprintError
+
+pub let fingerprint_version : Int
+
+pub fn magic() -> Bytes
+
+// Errors
+pub suberror FingerprintError {
+  InvalidArgument(String)
+  InvalidMagic
+  UnsupportedVersion(Int)
+  Truncated(String)
+  InvalidLength(String)
+  ChecksumMismatch(UInt64, UInt64)
+}
+
+// Types and methods
+pub(all) struct AudioFingerprint {
+  version : Int
+  frame_count : Int
+  bin_count : Int
+  config : HashConfig
+  hashes : Array[FingerprintHash]
+}
+
+pub(all) struct FingerprintHash {
+  hash : UInt64
+  anchor_frame : Int
+  anchor_bin : Int
+  delta_frames : Int
+  target_bin : Int
+}
+
+pub(all) struct HashConfig {
+  fan_out : Int
+  min_delta_frames : Int
+  max_delta_frames : Int
+  max_frequency_distance : Int
+  hash_seed : UInt64
+}
+pub fn HashConfig::new(fan_out? : Int, min_delta_frames? : Int, max_delta_frames? : Int, max_frequency_distance? : Int, hash_seed? : UInt64) -> Self raise FingerprintError
+
+// Type aliases
+
+// Traits

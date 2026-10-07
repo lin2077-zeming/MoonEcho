@@ -1,0 +1,8 @@
+import {
+  "lin2077-zeming/moonecho/src/audio",
+  "lin2077-zeming/moonecho/src/fingerprint" @fp,
+  "lin2077-zeming/moonecho/src/spectrum" @analysis,
+  "chgttyyr/MoonSpectrum" @mspectrum,
+}
+
+pkgtype(kind: "executable")

@@ -23,6 +23,7 @@ moon run cmd/moonecho
 moon run examples/basic
 moon run examples/wav-adapter
 moon run examples/spectrum
+moon run examples/fingerprint
 ```
 
 Expected CLI output:
@@ -72,6 +73,30 @@ let result = @spectrum.spectrogram(audio, config)
 ///|
 let peaks = @spectrum.extract_peaks(result, @spectrum.PeakConfig::new())
 ```
+
+## Fingerprint v1
+
+MoonEcho's fingerprint layer turns spectral peaks into pairwise hashes and
+serializes them in a deterministic binary format:
+
+```moonbit nocheck
+///|
+let config = @fingerprint.HashConfig::new()
+
+///|
+let fp = @fingerprint.fingerprint(
+  peaks,
+  config,
+  frame_count=result.magnitudes.length(),
+  bin_count=result.frequencies.length(),
+)
+
+///|
+let encoded = @fingerprint.encode(fp)
+```
+
+The exact byte layout is documented in
+[docs/fingerprint-v1.md](docs/fingerprint-v1.md).
 
 ## Roadmap
 
