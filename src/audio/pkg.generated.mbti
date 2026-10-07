@@ -8,6 +8,8 @@ import {
 // Values
 pub fn apply_gain(@moonwavkit.FloatBuffer, Double) -> @moonwavkit.FloatBuffer raise AudioError
 
+pub fn audio_buffer(Int, Int, Array[Double]) -> @moonwavkit.FloatBuffer raise AudioError
+
 pub fn channels(@moonwavkit.FloatBuffer) -> Int
 
 pub fn downmix(@moonwavkit.FloatBuffer) -> @moonwavkit.FloatBuffer raise AudioError

@@ -12,6 +12,7 @@ The project is currently in milestone `M1`: the audio adapter is in place, and t
 - Target: native and WebAssembly
 - License: Apache-2.0
 - Audio input dependency: `Ridge-Lab/moonwavkit@0.1.3`
+- Spectrum dependency: `chgttyyr/MoonSpectrum@0.2.2`
 
 ## Quick Start
 
@@ -21,6 +22,7 @@ moon test
 moon run cmd/moonecho
 moon run examples/basic
 moon run examples/wav-adapter
+moon run examples/spectrum
 ```
 
 Expected CLI output:
@@ -52,10 +54,26 @@ fn inspect_wav(bytes : Array[Int]) -> Unit raise {
 }
 ```
 
+## Spectrum Adapter
+
+MoonSpectrum provides the FFT, STFT, and synthetic signal generators. MoonEcho
+adapts them to normalized audio buffers and its own error boundary:
+
+```moonbit nocheck
+///|
+let audio = @audio.load_wav_mono(bytes, target_sample_rate=16000)
+
+///|
+let config = @spectrum.SpectrumConfig::new(window_length=1024, hop_size=512)
+
+///|
+let result = @spectrum.spectrogram(audio, config)
+```
+
 ## Roadmap
 
 - M0: project skeleton, README, LICENSE, CI, tests, first runnable example.
-- M1: WAV/PCM adapter over MoonWavKit, FFT/STFT, spectral peak extraction.
+- M1: WAV/PCM adapter over MoonWavKit, FFT/STFT adapter over MoonSpectrum, spectral peak extraction.
 - M2: fingerprint encoding, inverted index, snapshot format.
 - M3: matching, offset voting, confidence scoring, CLI.
 - M4: robustness tests, benchmarks, WASM demo.

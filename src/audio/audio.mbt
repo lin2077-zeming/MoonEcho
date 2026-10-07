@@ -22,6 +22,29 @@ pub fn error_message(error : AudioError) -> String {
 }
 
 ///|
+/// Build a validated normalized audio buffer.
+pub fn audio_buffer(
+  channels : Int,
+  sample_rate : Int,
+  samples : Array[Double],
+) -> AudioBuffer raise AudioError {
+  if channels <= 0 {
+    raise InvalidArgument("channels must be positive")
+  }
+  if sample_rate <= 0 {
+    raise InvalidArgument("sample_rate must be positive")
+  }
+  if samples.length() % channels != 0 {
+    raise InvalidArgument("sample count must be divisible by channel count")
+  }
+  let buffer = @wav.FloatBuffer::new(channels, sample_rate, samples)
+  if !buffer.is_valid() {
+    raise InvalidArgument("invalid audio buffer")
+  }
+  buffer
+}
+
+///|
 /// Decode a RIFF/WAVE byte buffer into normalized interleaved samples.
 pub fn load_wav(bytes : Array[Int]) -> AudioBuffer raise AudioError {
   let decoded = @wav.parse_and_decode(bytes)

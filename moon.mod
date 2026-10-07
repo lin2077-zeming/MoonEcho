@@ -27,4 +27,5 @@ description = "Local-first acoustic fingerprint search and audio alignment toolk
 
 import {
   "Ridge-Lab/moonwavkit@0.1.3",
+  "chgttyyr/MoonSpectrum@0.2.2",
 }
