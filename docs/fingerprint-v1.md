@@ -86,4 +86,3 @@ generation, not cryptographic authentication.
   fingerprints.
 - New fields must be introduced through a new version or through a documented
   flag bit.
-
