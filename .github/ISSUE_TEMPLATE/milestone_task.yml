@@ -1,0 +1,35 @@
+name: Milestone task
+description: Track one MoonEcho milestone deliverable.
+title: "[M0] "
+body:
+  - type: input
+    id: milestone
+    attributes:
+      label: Milestone
+      description: "Which milestone does this task belong to?"
+      placeholder: "M0"
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: "What should be true when this issue is complete?"
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: "List concrete checks, tests, or examples."
+      placeholder: |
+        - moon check passes
+        - moon test passes
+        - README or example updated
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: "Commands, screenshots, benchmark output, or links proving completion."

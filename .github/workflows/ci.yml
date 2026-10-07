@@ -1,0 +1,43 @@
+name: CI
+
+env:
+  MOONBIT_VERSION: 0.10.14+7d59c7ec9
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup MoonBit
+        uses: hustcer/setup-moonbit@v1
+        with:
+          version: ${{ env.MOONBIT_VERSION }}
+
+      - name: Show MoonBit version
+        run: moon version --all
+
+      - name: Check formatting
+        run: moon fmt --check
+
+      - name: Check all targets
+        run: moon check --target all --deny-warn
+
+      - name: Test wasm target
+        run: moon test --target wasm --deny-warn
+
+      - name: Test native target
+        run: moon test --target native --deny-warn
+
+      - name: Run CLI
+        run: moon run cmd/moonecho
