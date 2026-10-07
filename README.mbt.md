@@ -2,7 +2,7 @@
 
 MoonEcho is a local-first acoustic fingerprint search and audio alignment toolkit written in MoonBit.
 
-The project is currently at milestone `M0`: project skeleton, public API, CLI, tests, and CI.
+The project is currently in milestone `M1`: the audio adapter is in place, and the next work is spectrum and fingerprint processing.
 
 ## Status
 
@@ -11,6 +11,7 @@ The project is currently at milestone `M0`: project skeleton, public API, CLI, t
 - Main language: MoonBit
 - Target: native and WebAssembly
 - License: Apache-2.0
+- Audio input dependency: `Ridge-Lab/moonwavkit@0.1.3`
 
 ## Quick Start
 
@@ -19,6 +20,7 @@ moon check
 moon test
 moon run cmd/moonecho
 moon run examples/basic
+moon run examples/wav-adapter
 ```
 
 Expected CLI output:
@@ -36,10 +38,24 @@ fn main {
 }
 ```
 
+## Audio Adapter
+
+MoonEcho intentionally reuses MoonWavKit for RIFF/WAVE parsing, PCM decoding,
+generic PCM processing, and linear resampling. MoonEcho's adapter keeps a
+stable local API for the fingerprint pipeline:
+
+```moonbit nocheck
+///|
+fn inspect_wav(bytes : Array[Int]) -> Unit raise {
+  let audio = @audio.load_wav_mono(bytes, target_sample_rate=16000)
+  println(audio.frame_count())
+}
+```
+
 ## Roadmap
 
 - M0: project skeleton, README, LICENSE, CI, tests, first runnable example.
-- M1: PCM/WAV preprocessing, FFT/STFT, spectral peak extraction.
+- M1: WAV/PCM adapter over MoonWavKit, FFT/STFT, spectral peak extraction.
 - M2: fingerprint encoding, inverted index, snapshot format.
 - M3: matching, offset voting, confidence scoring, CLI.
 - M4: robustness tests, benchmarks, WASM demo.

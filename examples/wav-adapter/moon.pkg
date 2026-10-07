@@ -1,0 +1,6 @@
+import {
+  "lin2077-zeming/moonecho/src/audio",
+  "Ridge-Lab/moonwavkit" @wav,
+}
+
+pkgtype(kind: "executable")

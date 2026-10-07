@@ -1,0 +1,44 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "lin2077-zeming/moonecho/src/audio"
+
+import {
+  "Ridge-Lab/moonwavkit",
+}
+
+// Values
+pub fn apply_gain(@moonwavkit.FloatBuffer, Double) -> @moonwavkit.FloatBuffer raise AudioError
+
+pub fn channels(@moonwavkit.FloatBuffer) -> Int
+
+pub fn downmix(@moonwavkit.FloatBuffer) -> @moonwavkit.FloatBuffer raise AudioError
+
+pub fn duration_seconds(@moonwavkit.FloatBuffer) -> Double
+
+pub fn error_message(AudioError) -> String
+
+pub fn frame_count(@moonwavkit.FloatBuffer) -> Int
+
+pub fn load_wav(Array[Int]) -> @moonwavkit.FloatBuffer raise AudioError
+
+pub fn load_wav_mono(Array[Int], target_sample_rate? : Int) -> @moonwavkit.FloatBuffer raise AudioError
+
+pub fn normalize(@moonwavkit.FloatBuffer) -> @moonwavkit.FloatBuffer raise AudioError
+
+pub fn resample(@moonwavkit.FloatBuffer, Int) -> @moonwavkit.FloatBuffer raise AudioError
+
+pub fn sample_rate(@moonwavkit.FloatBuffer) -> Int
+
+pub fn validate(@moonwavkit.FloatBuffer) -> Bool
+
+// Errors
+pub suberror AudioError {
+  Decode(@moonwavkit.WavError)
+  InvalidArgument(String)
+}
+
+// Types and methods
+
+// Type aliases
+pub using @moonwavkit {type FloatBuffer as AudioBuffer}
+
+// Traits
