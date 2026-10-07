@@ -27,6 +27,9 @@ jobs:
       - name: Show MoonBit version
         run: moon version --all
 
+      - name: Update MoonCakes registry and dependencies
+        run: moon update
+
       - name: Check formatting
         run: moon fmt --check
 
