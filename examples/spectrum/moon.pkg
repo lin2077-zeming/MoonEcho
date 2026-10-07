@@ -1,5 +1,6 @@
 import {
   "lin2077-zeming/moonecho/src/spectrum" @analysis,
+  "lin2077-zeming/moonecho/src/audio",
   "chgttyyr/MoonSpectrum" @mspectrum,
 }
 

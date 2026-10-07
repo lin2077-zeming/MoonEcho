@@ -68,12 +68,15 @@ let config = @spectrum.SpectrumConfig::new(window_length=1024, hop_size=512)
 
 ///|
 let result = @spectrum.spectrogram(audio, config)
+
+///|
+let peaks = @spectrum.extract_peaks(result, @spectrum.PeakConfig::new())
 ```
 
 ## Roadmap
 
 - M0: project skeleton, README, LICENSE, CI, tests, first runnable example.
-- M1: WAV/PCM adapter over MoonWavKit, FFT/STFT adapter over MoonSpectrum, spectral peak extraction.
+- M1: WAV/PCM adapter over MoonWavKit, FFT/STFT adapter over MoonSpectrum, two-dimensional spectral peak extraction.
 - M2: fingerprint encoding, inverted index, snapshot format.
 - M3: matching, offset voting, confidence scoring, CLI.
 - M4: robustness tests, benchmarks, WASM demo.

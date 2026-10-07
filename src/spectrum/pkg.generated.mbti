@@ -11,6 +11,8 @@ pub fn dominant_peak(ArrayView[Double], Double) -> @MoonSpectrum.Peak raise Spec
 
 pub fn error_message(SpectrumError) -> String
 
+pub fn extract_peaks(@MoonSpectrum.SpectrogramResult, PeakConfig) -> Array[SpectralPeak] raise SpectrumError
+
 pub fn fft_magnitudes(ArrayView[Double]) -> Array[Double] raise SpectrumError
 
 pub fn spectrogram(@moonwavkit.FloatBuffer, SpectrumConfig) -> @MoonSpectrum.SpectrogramResult raise SpectrumError
@@ -22,6 +24,23 @@ pub suberror SpectrumError {
 }
 
 // Types and methods
+pub(all) struct PeakConfig {
+  frequency_radius : Int
+  time_radius : Int
+  min_magnitude : Double
+  relative_threshold : Double
+  max_peaks_per_frame : Int
+}
+pub fn PeakConfig::new(frequency_radius? : Int, time_radius? : Int, min_magnitude? : Double, relative_threshold? : Double, max_peaks_per_frame? : Int) -> Self raise SpectrumError
+
+pub(all) struct SpectralPeak {
+  frame : Int
+  bin : Int
+  time : Double
+  frequency : Double
+  magnitude : Double
+}
+
 pub(all) struct SpectrumConfig {
   window_length : Int
   hop_size : Int
