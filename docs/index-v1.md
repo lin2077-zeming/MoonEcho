@@ -80,4 +80,3 @@ bytes.
 - Track ids must be unique.
 - Every track fingerprint config must match the index config.
 - New fields require a new snapshot version or a documented flag bit.
-
