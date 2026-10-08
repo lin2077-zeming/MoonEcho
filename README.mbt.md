@@ -24,6 +24,7 @@ moon run examples/basic
 moon run examples/wav-adapter
 moon run examples/spectrum
 moon run examples/fingerprint
+moon run examples/index
 ```
 
 Expected CLI output:
@@ -97,6 +98,20 @@ let encoded = @fingerprint.encode(fp)
 
 The exact byte layout is documented in
 [docs/fingerprint-v1.md](docs/fingerprint-v1.md).
+
+## Index Snapshot v1
+
+The index layer maps each fingerprint hash to track/frame/bin postings and
+persists the full structure with a deterministic binary snapshot:
+
+```moonbit nocheck
+let index = @index.FingerprintIndex::new(config)
+index.add_track(1, "track-a", fingerprint)
+let snapshot = @index.encode(index)
+let restored = @index.decode(snapshot)
+```
+
+The exact byte layout is documented in [docs/index-v1.md](docs/index-v1.md).
 
 ## Roadmap
 
