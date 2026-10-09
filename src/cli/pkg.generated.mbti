@@ -3,6 +3,7 @@ package "lin2077-zeming/moonecho/src/cli"
 
 import {
   "lin2077-zeming/moonecho/src/audio",
+  "lin2077-zeming/moonecho/src/benchmark",
   "lin2077-zeming/moonecho/src/fingerprint",
   "lin2077-zeming/moonecho/src/index",
   "lin2077-zeming/moonecho/src/match",
@@ -20,6 +21,7 @@ pub fn usage() -> String
 pub suberror CliError {
   Argument(String)
   IO(String)
+  Benchmark(@benchmark.BenchmarkError)
   Audio(@audio.AudioError)
   Spectrum(@spectrum.SpectrumError)
   Fingerprint(@fingerprint.FingerprintError)

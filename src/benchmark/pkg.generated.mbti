@@ -1,0 +1,54 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "lin2077-zeming/moonecho/src/benchmark"
+
+// Values
+pub fn benchmark_report(RobustnessConfig, Int) -> BenchmarkReport raise BenchmarkError
+
+pub fn error_message(BenchmarkError) -> String
+
+pub fn robustness_report(RobustnessConfig) -> BenchmarkReport raise BenchmarkError
+
+// Errors
+pub suberror BenchmarkError {
+  Build(String)
+}
+
+// Types and methods
+pub(all) struct BenchmarkReport {
+  cases : Array[RobustnessCase]
+  correct_hits : Int
+  positive_cases : Int
+  negative_cases : Int
+  negative_hits : Int
+  mean_offset_error_frames : Double
+  max_offset_error_frames : Int
+  hash_count : Int
+  posting_count : Int
+  snapshot_bytes : Int
+  query_median_us : Double
+}
+
+pub(all) struct RobustnessCase {
+  name : String
+  top1_hit : Bool
+  strong : Bool
+  expected_offset_frames : Int
+  actual_offset_frames : Int
+  offset_error_frames : Int
+}
+
+pub(all) struct RobustnessConfig {
+  sample_rate : Int
+  window_length : Int
+  hop_size : Int
+  track_frames : Int
+  clip_start : Int
+  clip_frames : Int
+  silence_padding : Int
+  noise_amplitude : Double
+}
+pub fn RobustnessConfig::new(sample_rate? : Int, window_length? : Int, hop_size? : Int, track_frames? : Int, clip_start? : Int, clip_frames? : Int, silence_padding? : Int, noise_amplitude? : Double) -> Self raise BenchmarkError
+
+// Type aliases
+
+// Traits

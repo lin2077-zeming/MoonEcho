@@ -26,3 +26,9 @@ test "run version and help" {
   assert_eq(try! run(["moonecho", "version"]), "MoonEcho v0.1.0")
   assert_true(try! run(["moonecho", "help"]).contains("moonecho index"))
 }
+
+///|
+test "parse bench options" {
+  assert_eq(parse_bench_options([]), 5)
+  assert_eq(parse_bench_options(["--repeat", "9"]), 9)
+}

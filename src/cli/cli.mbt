@@ -2,6 +2,7 @@
 pub suberror CliError {
   Argument(String)
   IO(String)
+  Benchmark(@benchmark.BenchmarkError)
   Audio(@audio.AudioError)
   Spectrum(@spectrum.SpectrumError)
   Fingerprint(@fingerprint.FingerprintError)
@@ -14,6 +15,7 @@ pub fn error_message(error : CliError) -> String {
   match error {
     Argument(message) => message
     IO(message) => message
+    Benchmark(err) => @benchmark.error_message(err)
     Audio(err) => @audio.error_message(err)
     Spectrum(err) => @spectrum.error_message(err)
     Fingerprint(err) => @fingerprint.error_message(err)
@@ -27,7 +29,8 @@ pub fn usage() -> String {
   "MoonEcho CLI\n\nUsage:\n" +
   "  moonecho version\n" +
   "  moonecho index --input <wav> --output <snapshot> [--name <track>] [--id <n>] [--sample-rate <hz>] [--window-length <n>] [--hop-size <n>]\n" +
-  "  moonecho match --index <snapshot> --input <wav> [--sample-rate <hz>] [--window-length <n>] [--hop-size <n>] [--top-k <n>] [--min-votes <n>] [--min-confidence <f>] [--min-margin <f>]\n"
+  "  moonecho match --index <snapshot> --input <wav> [--sample-rate <hz>] [--window-length <n>] [--hop-size <n>] [--top-k <n>] [--min-votes <n>] [--min-confidence <f>] [--min-margin <f>]\n" +
+  "  moonecho bench [--repeat <n>]\n"
 }
 
 ///|
@@ -64,8 +67,53 @@ pub fn run(args : Array[String]) -> String raise CliError {
     "help" | "--help" | "-h" => usage()
     "index" => run_index(sub_args(args, 2))
     "match" => run_match(sub_args(args, 2))
+    "bench" => run_bench(sub_args(args, 2))
     command => raise Argument("unknown command: \{command}")
   }
+}
+
+///|
+fn run_bench(args : Array[String]) -> String raise CliError {
+  let repeat = parse_bench_options(args)
+  let config = try @benchmark.RobustnessConfig::new() catch {
+    err => raise Benchmark(err)
+  } noraise {
+    value => value
+  }
+  let report = try @benchmark.benchmark_report(config, repeat) catch {
+    err => raise Benchmark(err)
+  } noraise {
+    value => value
+  }
+  "benchmark: ok\n" +
+  "cases: \{report.cases.length()}\n" +
+  "correct_hits: \{report.correct_hits}/\{report.positive_cases}\n" +
+  "negative_hits: \{report.negative_hits}/\{report.negative_cases}\n" +
+  "mean_offset_error_frames: \{report.mean_offset_error_frames}\n" +
+  "max_offset_error_frames: \{report.max_offset_error_frames}\n" +
+  "hash_count: \{report.hash_count}\n" +
+  "posting_count: \{report.posting_count}\n" +
+  "snapshot_bytes: \{report.snapshot_bytes}\n" +
+  "query_median_us: \{report.query_median_us}"
+}
+
+///|
+fn parse_bench_options(args : Array[String]) -> Int raise CliError {
+  let mut repeat = 5
+  let mut cursor = 0
+  while cursor < args.length() {
+    let option = args[cursor]
+    if option == "--repeat" {
+      repeat = parse_int(require_value(args, cursor, option), option)
+      cursor = cursor + 2
+    } else {
+      raise Argument("unknown bench option: \{option}")
+    }
+  }
+  if repeat <= 0 {
+    raise Argument("repeat must be positive")
+  }
+  repeat
 }
 
 ///|

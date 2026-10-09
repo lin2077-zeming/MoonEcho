@@ -6,6 +6,7 @@
 moonecho version
 moonecho index --input <wav> --output <snapshot>
 moonecho match --index <snapshot> --input <wav>
+moonecho bench
 ```
 
 ## Index
@@ -61,3 +62,24 @@ The CLI uses deterministic defaults so an index and query created with the same
 options can be compared. The current index snapshot v1 stores fingerprint hash
 configuration but not STFT window/hop settings, so callers should keep those
 settings consistent between index and match.
+
+## Bench
+
+`bench` runs the built-in robustness suite:
+
+- clean clip
+- silence-padded clip
+- gain-shifted clip
+- noisy clip
+- unrelated negative-control clip
+
+It reports:
+
+- correct top-1 hits
+- negative-control hits
+- mean and maximum offset error
+- hash and posting counts
+- snapshot bytes
+- median query time in microseconds
+
+Use `--repeat <n>` to control the timing repetition count.

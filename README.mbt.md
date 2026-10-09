@@ -34,6 +34,7 @@ CLI:
 moon run cmd/moonecho -- version
 moon run cmd/moonecho -- index --input track.wav --output track.idx --name demo
 moon run cmd/moonecho -- match --index track.idx --input clip.wav
+moon run cmd/moonecho -- bench
 ```
 
 Expected CLI output:
@@ -146,6 +147,9 @@ moonecho match
 ```
 
 See [docs/cli.md](docs/cli.md) for all options and reproducibility notes.
+
+The robustness and benchmark harness is documented in
+[docs/benchmark.md](docs/benchmark.md).
 
 ## Roadmap
 
