@@ -1,5 +1,6 @@
 import {
-  "lin2077-zeming/moonecho" @lib,
+  "lin2077-zeming/moonecho/src/cli",
+  "moonbitlang/core/env",
 }
 
 pkgtype(kind: "executable")

@@ -28,6 +28,14 @@ moon run examples/index
 moon run examples/match
 ```
 
+CLI:
+
+```bash
+moon run cmd/moonecho -- version
+moon run cmd/moonecho -- index --input track.wav --output track.idx --name demo
+moon run cmd/moonecho -- match --index track.idx --input clip.wav
+```
+
 Expected CLI output:
 
 ```text
@@ -126,6 +134,18 @@ println(@match.status_label(result.status))
 ```
 
 The scoring algorithm is documented in [docs/matching.md](docs/matching.md).
+
+## CLI
+
+The command-line façade wires audio decoding, spectrum extraction, fingerprint
+encoding, index snapshots, and candidate matching into two commands:
+
+```text
+moonecho index
+moonecho match
+```
+
+See [docs/cli.md](docs/cli.md) for all options and reproducibility notes.
 
 ## Roadmap
 
