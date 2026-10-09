@@ -1,0 +1,54 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "lin2077-zeming/moonecho/src/match"
+
+import {
+  "lin2077-zeming/moonecho/src/fingerprint",
+  "lin2077-zeming/moonecho/src/index",
+}
+
+// Values
+pub fn error_message(MatchError) -> String
+
+pub fn match_fingerprint(@index.FingerprintIndex, @fingerprint.AudioFingerprint, MatchConfig) -> MatchResult raise MatchError
+
+pub fn status_label(MatchStatus) -> String
+
+// Errors
+pub suberror MatchError {
+  InvalidArgument(String)
+}
+
+// Types and methods
+pub(all) struct MatchCandidate {
+  track_id : Int
+  name : String
+  offset_frames : Int
+  votes : Int
+  confidence : Double
+  margin : Double
+}
+
+pub(all) struct MatchConfig {
+  top_k : Int
+  min_votes : Int
+  min_confidence : Double
+  min_margin : Double
+}
+pub fn MatchConfig::new(top_k? : Int, min_votes? : Int, min_confidence? : Double, min_margin? : Double) -> Self raise MatchError
+
+pub(all) struct MatchResult {
+  status : MatchStatus
+  candidates : Array[MatchCandidate]
+  query_hash_count : Int
+  considered_postings : Int
+}
+
+pub(all) enum MatchStatus {
+  Strong
+  Weak
+  NoMatch
+}
+
+// Type aliases
+
+// Traits

@@ -25,6 +25,7 @@ moon run examples/wav-adapter
 moon run examples/spectrum
 moon run examples/fingerprint
 moon run examples/index
+moon run examples/match
 ```
 
 Expected CLI output:
@@ -112,6 +113,19 @@ let restored = @index.decode(snapshot)
 ```
 
 The exact byte layout is documented in [docs/index-v1.md](docs/index-v1.md).
+
+## Candidate Matching
+
+The matching layer votes on `(track_id, offset)` pairs produced by shared
+fingerprint hashes, then ranks tracks and computes confidence and margin:
+
+```moonbit nocheck
+let config = @match.MatchConfig::new(min_votes=3, min_confidence=0.2)
+let result = @match.match_fingerprint(index, query, config)
+println(@match.status_label(result.status))
+```
+
+The scoring algorithm is documented in [docs/matching.md](docs/matching.md).
 
 ## Roadmap
 

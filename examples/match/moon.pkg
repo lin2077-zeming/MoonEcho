@@ -1,0 +1,7 @@
+import {
+  "lin2077-zeming/moonecho/src/fingerprint" @fp,
+  "lin2077-zeming/moonecho/src/index" @idx,
+  "lin2077-zeming/moonecho/src/match" @matcher,
+}
+
+pkgtype(kind: "executable")
