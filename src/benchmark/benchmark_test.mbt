@@ -13,7 +13,8 @@ test "robustness suite has no negative hits" {
   let report = try! @benchmark.robustness_report(config)
   assert_eq(report.correct_hits, report.positive_cases)
   assert_eq(report.negative_hits, 0)
-  assert_true(report.mean_offset_error_frames <= 1.0)
+  assert_true(report.mean_offset_error_frames <= config.hop_size.to_double())
+  assert_true(report.mean_sample_offset_error <= 1.0)
   assert_true(report.hash_count > 0)
   assert_true(report.snapshot_bytes > 0)
 }

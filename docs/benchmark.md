@@ -8,10 +8,12 @@ acceptance evidence, not as a general audio benchmark suite.
 
 ## Generated Track
 
-The harness synthesizes a deterministic two-tone track:
+The harness synthesizes a deterministic mixed track:
 
 - 440 Hz tone
 - 660 Hz tone
+- linear chirp
+- alternating pulse markers
 - fixed sample rate and frame count
 
 No external audio files or network access are required.
@@ -22,7 +24,7 @@ No external audio files or network access are required.
 - `silence`: the same crop with deterministic left/right silence padding.
 - `gain`: the same crop after a gain change.
 - `noise`: the same crop with deterministic white noise.
-- `unrelated`: a different frequency used as a negative control.
+- `unrelated`: an out-of-band high frequency used as a negative control.
 
 Positive cases are expected to return the indexed track as the top hit.
 Negative cases are expected not to hit the indexed track.
@@ -33,6 +35,8 @@ Negative cases are expected not to hit the indexed track.
 - `negative_hits / negative_cases`
 - mean offset error in STFT frames
 - maximum offset error in STFT frames
+- mean offset error in samples
+- maximum offset error in samples
 - hash count and posting count
 - snapshot size in bytes
 - median query time in microseconds

@@ -22,6 +22,8 @@ pub(all) struct BenchmarkReport {
   negative_hits : Int
   mean_offset_error_frames : Double
   max_offset_error_frames : Int
+  mean_sample_offset_error : Double
+  max_sample_offset_error : Int
   hash_count : Int
   posting_count : Int
   snapshot_bytes : Int
@@ -35,6 +37,8 @@ pub(all) struct RobustnessCase {
   expected_offset_frames : Int
   actual_offset_frames : Int
   offset_error_frames : Int
+  refined_offset_samples : Int
+  sample_offset_error : Int
 }
 
 pub(all) struct RobustnessConfig {

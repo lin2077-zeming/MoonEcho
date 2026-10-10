@@ -5,7 +5,7 @@
 ```text
 moonecho version
 moonecho index --input <wav> --output <snapshot>
-moonecho match --index <snapshot> --input <wav>
+moonecho match --index <snapshot> --input <wav> [--track <wav>]
 moonecho bench
 ```
 
@@ -50,6 +50,7 @@ Required options:
 
 Optional options:
 
+- `--track <wav>` for sample-accurate alignment refinement
 - `--sample-rate <hz>`
 - `--window-length <frames>`
 - `--hop-size <frames>`
@@ -63,6 +64,10 @@ Index snapshots are written as v2 and carry the full processing profile.
 hash config automatically. If the caller explicitly supplies `--sample-rate`,
 `--window-length`, or `--hop-size` with values that conflict with the profile,
 the command fails instead of silently producing a mismatched query.
+
+When `--track` is supplied, `match` runs bounded normalized cross-correlation
+around the fingerprint-derived frame offset and reports `offset_samples` and
+`correlation`.
 
 ## Bench
 

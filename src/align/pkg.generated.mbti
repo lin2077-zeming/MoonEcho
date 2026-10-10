@@ -1,0 +1,30 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "lin2077-zeming/moonecho/src/align"
+
+// Values
+pub fn error_message(AlignError) -> String
+
+pub fn refine_offset(ArrayView[Double], ArrayView[Double], Int, AlignConfig) -> AlignmentResult raise AlignError
+
+// Errors
+pub suberror AlignError {
+  InvalidArgument(String)
+}
+
+// Types and methods
+pub(all) struct AlignConfig {
+  search_radius_samples : Int
+  window_samples : Int
+}
+pub fn AlignConfig::new(search_radius_samples? : Int, window_samples? : Int) -> Self raise AlignError
+
+pub(all) struct AlignmentResult {
+  rough_offset_samples : Int
+  refined_offset_samples : Int
+  correlation : Double
+  evaluated_lags : Int
+}
+
+// Type aliases
+
+// Traits

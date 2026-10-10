@@ -137,6 +137,7 @@ println(@match.status_label(result.status))
 ```
 
 The scoring algorithm is documented in [docs/matching.md](docs/matching.md).
+Sample-accurate refinement is documented in [docs/alignment.md](docs/alignment.md).
 
 ## CLI
 

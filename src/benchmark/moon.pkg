@@ -1,4 +1,5 @@
 import {
+  "lin2077-zeming/moonecho/src/align",
   "lin2077-zeming/moonecho/src/audio",
   "lin2077-zeming/moonecho/src/fingerprint",
   "lin2077-zeming/moonecho/src/index",

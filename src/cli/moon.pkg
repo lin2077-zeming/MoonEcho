@@ -1,4 +1,5 @@
 import {
+  "lin2077-zeming/moonecho/src/align",
   "moonbitlang/x/fs",
   "moonbitlang/core/string",
   "lin2077-zeming/moonecho/src/audio",

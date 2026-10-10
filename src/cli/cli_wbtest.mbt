@@ -12,11 +12,17 @@ test "parse index options" {
 ///|
 test "parse match options" {
   let options = parse_match_options([
-    "--index", "a.idx", "--input", "clip.wav", "--min-votes", "4", "--min-confidence",
-    "0.25",
+    "--index", "a.idx", "--input", "clip.wav", "--track", "track.wav", "--min-votes",
+    "4", "--min-confidence", "0.25",
   ])
   assert_eq(options.index_path, "a.idx")
   assert_eq(options.input, "clip.wav")
+  assert_true(
+    match options.track_path {
+      Some(path) => path == "track.wav"
+      None => false
+    },
+  )
   assert_true(options.sample_rate is None)
   assert_eq(options.min_votes, 4)
   assert_true((options.min_confidence - 0.25).abs() < 0.0001)

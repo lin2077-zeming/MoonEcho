@@ -2,6 +2,7 @@
 pub suberror CliError {
   Argument(String)
   IO(String)
+  Align(@align.AlignError)
   Benchmark(@benchmark.BenchmarkError)
   Audio(@audio.AudioError)
   Spectrum(@spectrum.SpectrumError)
@@ -15,6 +16,7 @@ pub fn error_message(error : CliError) -> String {
   match error {
     Argument(message) => message
     IO(message) => message
+    Align(err) => @align.error_message(err)
     Benchmark(err) => @benchmark.error_message(err)
     Audio(err) => @audio.error_message(err)
     Spectrum(err) => @spectrum.error_message(err)
@@ -29,7 +31,7 @@ pub fn usage() -> String {
   "MoonEcho CLI\n\nUsage:\n" +
   "  moonecho version\n" +
   "  moonecho index --input <wav> --output <snapshot> [--name <track>] [--id <n>] [--sample-rate <hz>] [--window-length <n>] [--hop-size <n>]\n" +
-  "  moonecho match --index <snapshot> --input <wav> [--sample-rate <hz>] [--window-length <n>] [--hop-size <n>] [--top-k <n>] [--min-votes <n>] [--min-confidence <f>] [--min-margin <f>]\n" +
+  "  moonecho match --index <snapshot> --input <wav> [--track <wav>] [--sample-rate <hz>] [--window-length <n>] [--hop-size <n>] [--top-k <n>] [--min-votes <n>] [--min-confidence <f>] [--min-margin <f>]\n" +
   "  moonecho bench [--repeat <n>]\n"
 }
 
@@ -48,6 +50,7 @@ priv struct IndexOptions {
 priv struct MatchOptions {
   index_path : String
   input : String
+  track_path : String?
   sample_rate : Int?
   window_length : Int?
   hop_size : Int?
@@ -91,6 +94,8 @@ fn run_bench(args : Array[String]) -> String raise CliError {
   "negative_hits: \{report.negative_hits}/\{report.negative_cases}\n" +
   "mean_offset_error_frames: \{report.mean_offset_error_frames}\n" +
   "max_offset_error_frames: \{report.max_offset_error_frames}\n" +
+  "mean_sample_offset_error: \{report.mean_sample_offset_error}\n" +
+  "max_sample_offset_error: \{report.max_sample_offset_error}\n" +
   "hash_count: \{report.hash_count}\n" +
   "posting_count: \{report.posting_count}\n" +
   "snapshot_bytes: \{report.snapshot_bytes}\n" +
@@ -192,13 +197,48 @@ fn run_match(args : Array[String]) -> String raise CliError {
       "considered_postings: \{result.considered_postings}"
   }
   let best = result.candidates[0]
-  let offset_seconds = best.offset_frames.to_double() *
-    index.profile.hop_size.to_double() /
+  let rough_offset_samples = best.offset_frames * index.profile.hop_size
+  let (offset_samples, alignment, correlation) = match options.track_path {
+    Some(track_path) => {
+      let track_audio = audio_or_cli(
+        bytes_to_ints(read_bytes(track_path)),
+        index.profile.sample_rate,
+      )
+      let alignment_config = try
+        @align.AlignConfig::new(
+          search_radius_samples=index.profile.hop_size,
+          window_samples=4096,
+        )
+      catch {
+        err => raise Align(err)
+      } noraise {
+        value => value
+      }
+      let refined = try
+        @align.refine_offset(
+          track_audio.samples[:],
+          query_audio.samples[:],
+          rough_offset_samples,
+          alignment_config,
+        )
+      catch {
+        err => raise Align(err)
+      } noraise {
+        value => value
+      }
+      (refined.refined_offset_samples, "sample", refined.correlation)
+    }
+    None => (rough_offset_samples, "frame", 0.0)
+  }
+  let offset_seconds = offset_samples.to_double() /
     index.profile.sample_rate.to_double()
   "status: \{@match.status_label(result.status)}\n" +
   "top_track: \{best.name}\n" +
   "offset_frames: \{best.offset_frames}\n" +
+  "offset_samples: \{offset_samples}\n" +
   "offset_seconds: \{offset_seconds}\n" +
+  "alignment: \{alignment}\n" +
+  "correlation: \{correlation}\n" +
   "confidence: \{best.confidence}\n" +
   "candidates: \{result.candidates.length()}\n" +
   "considered_postings: \{result.considered_postings}"
@@ -260,6 +300,7 @@ fn parse_index_options(args : Array[String]) -> IndexOptions raise CliError {
 fn parse_match_options(args : Array[String]) -> MatchOptions raise CliError {
   let mut index_path : String? = None
   let mut input : String? = None
+  let mut track_path : String? = None
   let mut sample_rate : Int? = None
   let mut window_length : Int? = None
   let mut hop_size : Int? = None
@@ -275,6 +316,9 @@ fn parse_match_options(args : Array[String]) -> MatchOptions raise CliError {
       cursor = cursor + 2
     } else if option == "--input" {
       input = Some(require_value(args, cursor, option))
+      cursor = cursor + 2
+    } else if option == "--track" {
+      track_path = Some(require_value(args, cursor, option))
       cursor = cursor + 2
     } else if option == "--sample-rate" {
       sample_rate = Some(parse_int(require_value(args, cursor, option), option))
@@ -308,6 +352,7 @@ fn parse_match_options(args : Array[String]) -> MatchOptions raise CliError {
       {
         index_path,
         input,
+        track_path,
         sample_rate,
         window_length,
         hop_size,

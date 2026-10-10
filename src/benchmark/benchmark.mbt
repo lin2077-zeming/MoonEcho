@@ -18,6 +18,8 @@ pub(all) struct RobustnessCase {
   expected_offset_frames : Int
   actual_offset_frames : Int
   offset_error_frames : Int
+  refined_offset_samples : Int
+  sample_offset_error : Int
 }
 
 ///|
@@ -29,6 +31,8 @@ pub(all) struct BenchmarkReport {
   negative_hits : Int
   mean_offset_error_frames : Double
   max_offset_error_frames : Int
+  mean_sample_offset_error : Double
+  max_sample_offset_error : Int
   hash_count : Int
   posting_count : Int
   snapshot_bytes : Int
@@ -81,24 +85,46 @@ pub fn robustness_report(
   let snapshot = @index.encode(index)
   let hash_count = count_hashes(index)
   let clip = slice_samples(track, config.clip_start, config.clip_frames)
-  let clean = match_case(index, "clean", clip, 0, config)
+  let clean = match_case(
+    index,
+    track,
+    "clean",
+    clip,
+    0,
+    config.clip_start,
+    config,
+  )
   let padded = match_case(
     index,
+    track,
     "silence",
     pad_silence(clip, config.silence_padding),
     -(config.silence_padding / config.hop_size),
+    config.clip_start - config.silence_padding,
     config,
   )
-  let gained = match_case(index, "gain", apply_gain(clip, 0.5), 0, config)
+  let gained = match_case(
+    index,
+    track,
+    "gain",
+    apply_gain(clip, 0.5),
+    0,
+    config.clip_start,
+    config,
+  )
   let noisy = match_case(
     index,
+    track,
     "noise",
     add_noise(clip, config.noise_amplitude),
     0,
+    config.clip_start,
     config,
   )
   let negative_signal = different_signal(config.clip_frames, config.sample_rate)
-  let negative = match_case(index, "unrelated", negative_signal, 0, config)
+  let negative = match_case(
+    index, track, "unrelated", negative_signal, 0, 0, config,
+  )
   let cases = [clean, padded, gained, noisy, negative]
   summarize(cases, hash_count, index.posting_count(), snapshot.length())
 }
@@ -142,6 +168,8 @@ pub fn benchmark_report(
     negative_hits: report.negative_hits,
     mean_offset_error_frames: report.mean_offset_error_frames,
     max_offset_error_frames: report.max_offset_error_frames,
+    mean_sample_offset_error: report.mean_sample_offset_error,
+    max_sample_offset_error: report.max_sample_offset_error,
     hash_count: report.hash_count,
     posting_count: report.posting_count,
     snapshot_bytes: report.snapshot_bytes,
@@ -151,11 +179,23 @@ pub fn benchmark_report(
 
 ///|
 fn build_track(config : RobustnessConfig) -> Array[Double] raise BenchmarkError {
-  let first = sine_or_build(config, 440.0, 0.8)
-  let second = sine_or_build(config, 660.0, 0.35)
+  let first = sine_or_build(config, 440.0, 0.55)
+  let second = sine_or_build(config, 660.0, 0.25)
+  let chirp = chirp_or_build(config)
   let output = first.copy()
   for index in 0..<output.length() {
-    output[index] = output[index] + second[index]
+    output[index] = output[index] + second[index] + chirp[index]
+  }
+  let pulse_period = 700
+  let pulse_width = 8
+  for index in 0..<output.length() {
+    if index % pulse_period < pulse_width {
+      if index / pulse_period % 2 == 0 {
+        output[index] = output[index] + 0.2
+      } else {
+        output[index] = output[index] - 0.2
+      }
+    }
   }
   output
 }
@@ -240,9 +280,11 @@ fn fingerprint_from_samples(
 ///|
 fn match_case(
   index : @index.FingerprintIndex,
+  track : Array[Double],
   name : String,
   samples : Array[Double],
   expected_offset_frames : Int,
+  expected_sample_offset : Int,
   config : RobustnessConfig,
 ) -> RobustnessCase raise BenchmarkError {
   let query = fingerprint_from_samples(samples, index.config, config)
@@ -274,6 +316,34 @@ fn match_case(
   } else {
     0
   }
+  let refined_offset = if top1_hit {
+    let rough = actual * config.hop_size
+    let alignment_config = try
+      @align.AlignConfig::new(
+        search_radius_samples=config.hop_size,
+        window_samples=4096,
+      )
+    catch {
+      _ => raise Build("failed to create alignment config")
+    } noraise {
+      value => value
+    }
+    let alignment = try
+      @align.refine_offset(track[:], samples[:], rough, alignment_config)
+    catch {
+      _ => raise Build("failed to refine alignment")
+    } noraise {
+      value => value
+    }
+    alignment.refined_offset_samples
+  } else {
+    0
+  }
+  let sample_offset_error = if top1_hit {
+    abs_int(refined_offset - expected_sample_offset)
+  } else {
+    0
+  }
   {
     name,
     top1_hit,
@@ -281,6 +351,8 @@ fn match_case(
     expected_offset_frames,
     actual_offset_frames: actual,
     offset_error_frames: offset_error,
+    refined_offset_samples: refined_offset,
+    sample_offset_error,
   }
 }
 
@@ -298,6 +370,8 @@ fn summarize(
   let mut offset_error_sum = 0
   let mut offset_error_count = 0
   let mut max_offset_error = 0
+  let mut sample_offset_error_sum = 0
+  let mut max_sample_offset_error = 0
   for case in cases {
     if case.name == "unrelated" {
       negative_cases = negative_cases + 1
@@ -314,12 +388,22 @@ fn summarize(
       if case.offset_error_frames > max_offset_error {
         max_offset_error = case.offset_error_frames
       }
+      sample_offset_error_sum = sample_offset_error_sum +
+        case.sample_offset_error
+      if case.sample_offset_error > max_sample_offset_error {
+        max_sample_offset_error = case.sample_offset_error
+      }
     }
   }
   let mean_offset_error = if offset_error_count == 0 {
     0.0
   } else {
     offset_error_sum.to_double() / offset_error_count.to_double()
+  }
+  let mean_sample_offset_error = if offset_error_count == 0 {
+    0.0
+  } else {
+    sample_offset_error_sum.to_double() / offset_error_count.to_double()
   }
   {
     cases,
@@ -329,6 +413,8 @@ fn summarize(
     negative_hits,
     mean_offset_error_frames: mean_offset_error,
     max_offset_error_frames: max_offset_error,
+    mean_sample_offset_error,
+    max_sample_offset_error,
     hash_count,
     posting_count,
     snapshot_bytes,
@@ -392,7 +478,7 @@ fn different_signal(length : Int, sample_rate : Int) -> Array[Double] {
   try! @mspectrum.sine_wave(
     length~,
     sample_rate=sample_rate.to_double(),
-    frequency=880.0,
+    frequency=3000.0,
     amplitude=0.8,
   )
 }
@@ -412,6 +498,25 @@ fn sine_or_build(
     )
   catch {
     _ => raise Build("failed to synthesize sine wave")
+  } noraise {
+    value => value
+  }
+}
+
+///|
+fn chirp_or_build(
+  config : RobustnessConfig,
+) -> Array[Double] raise BenchmarkError {
+  try
+    @mspectrum.chirp(
+      length=config.track_frames,
+      sample_rate=config.sample_rate.to_double(),
+      start_hz=180.0,
+      end_hz=1200.0,
+      amplitude=0.25,
+    )
+  catch {
+    _ => raise Build("failed to synthesize chirp")
   } noraise {
     value => value
   }
