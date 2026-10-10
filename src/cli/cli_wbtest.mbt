@@ -17,8 +17,29 @@ test "parse match options" {
   ])
   assert_eq(options.index_path, "a.idx")
   assert_eq(options.input, "clip.wav")
+  assert_true(options.sample_rate is None)
   assert_eq(options.min_votes, 4)
   assert_true((options.min_confidence - 0.25).abs() < 0.0001)
+}
+
+///|
+test "match rejects profile-conflicting options" {
+  let profile = try! @index.ProcessingProfile::new(
+    8000,
+    256,
+    128,
+    @index.default_peak_config(),
+    @fingerprint.HashConfig::new(),
+  )
+  let options = parse_match_options([
+    "--index", "a.idx", "--input", "clip.wav", "--sample-rate", "16000",
+  ])
+  try check_match_profile_options(options, profile) catch {
+    Argument(_) => ()
+    _ => fail("expected profile conflict")
+  } noraise {
+    _ => fail("expected profile conflict")
+  }
 }
 
 ///|

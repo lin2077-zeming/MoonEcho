@@ -1,21 +1,23 @@
-# MoonEcho Fingerprint Index Snapshot v1
-
-> Legacy status: v1 remains readable for compatibility, but new snapshots are
-> written as v2. See [index-v2.md](index-v2.md).
+# MoonEcho Fingerprint Index Snapshot v2
 
 ## Purpose
 
-Index Snapshot v1 stores an inverted index from fingerprint hash to posting
-lists. It is deterministic, self-describing, and designed for local persistence.
+Index Snapshot v2 extends v1 with a processing profile. A snapshot now carries
+the sample rate and spectrum/peak/hash settings used to create its fingerprints,
+so matching can reproduce the same preprocessing without relying on external
+CLI arguments.
 
 ## Format Properties
 
-- Magic: ASCII `MOONIX01`
-- Index version: `1`
+- Magic: ASCII `MOONIX02`
+- Index version: `2`
 - Fingerprint version carried by the header: `1`
-- Endianness: little-endian for all integers
+- Endianness: little-endian for all integers and IEEE-754 doubles
 - Checksum: FNV-1a 64-bit over every byte before the checksum field
-- Required minimum size: 48 bytes
+- Required minimum size: 84 bytes
+
+The decoder also accepts legacy `MOONIX01` v1 snapshots, which are upgraded in
+memory to v2 records with the default processing profile.
 
 ## Header
 
@@ -26,18 +28,28 @@ lists. It is deterministic, self-describing, and designed for local persistence.
 | 10 | 2 | flags |
 | 12 | 2 | fingerprint version |
 | 14 | 2 | reserved, must be `0` |
-| 16 | 8 | hash seed |
-| 24 | 2 | fan-out |
-| 26 | 2 | min delta frames |
-| 28 | 2 | max delta frames |
-| 30 | 2 | encoded max frequency distance |
-| 32 | 4 | track count |
-| 36 | 4 | posting count |
+| 16 | 4 | sample rate |
+| 20 | 4 | window length |
+| 24 | 4 | hop size |
+| 28 | 2 | peak frequency radius |
+| 30 | 2 | peak time radius |
+| 32 | 2 | max peaks per frame |
+| 34 | 2 | reserved, must be `0` |
+| 36 | 8 | minimum magnitude |
+| 44 | 8 | relative threshold |
+| 52 | 8 | hash seed |
+| 60 | 2 | fan-out |
+| 62 | 2 | min delta frames |
+| 64 | 2 | max delta frames |
+| 66 | 2 | encoded max frequency distance |
+| 68 | 4 | track count |
+| 72 | 4 | posting count |
+
+Header size: 76 bytes.
 
 `encoded max frequency distance` uses `0` for unlimited, otherwise
-`distance + 1`.
-
-Header size: 40 bytes.
+`distance + 1`. Minimum magnitude and relative threshold are stored as IEEE-754
+binary64 values.
 
 ## Track Record
 
@@ -81,5 +93,7 @@ bytes.
 - Unknown magic, version, flags, reserved fields, truncated data, malformed
   UTF-8 names, length mismatch, and checksum mismatch are rejected.
 - Track ids must be unique.
-- Every track fingerprint config must match the index config.
-- New fields require a new snapshot version or a documented flag bit.
+- Every track fingerprint config must match the profile hash config.
+- `match` uses the embedded profile by default.
+- Caller-supplied sample-rate/window/hop options that conflict with the profile
+  are rejected by the CLI.

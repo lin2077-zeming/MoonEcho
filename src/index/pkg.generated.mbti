@@ -3,10 +3,15 @@ package "lin2077-zeming/moonecho/src/index"
 
 import {
   "lin2077-zeming/moonecho/src/fingerprint",
+  "lin2077-zeming/moonecho/src/spectrum",
 }
 
 // Values
 pub fn decode(Bytes) -> FingerprintIndex raise IndexError
+
+pub fn default_peak_config() -> @spectrum.PeakConfig
+
+pub fn default_profile(@fingerprint.HashConfig) -> ProcessingProfile
 
 pub fn encode(FingerprintIndex) -> Bytes
 
@@ -14,7 +19,17 @@ pub fn error_message(IndexError) -> String
 
 pub fn index_magic() -> Bytes
 
+pub fn index_magic_v1() -> Bytes
+
+pub fn index_magic_v2() -> Bytes
+
 pub let index_version : Int
+
+pub let index_version_v1 : Int
+
+pub let index_version_v2 : Int
+
+pub fn with_profile(ProcessingProfile) -> FingerprintIndex
 
 // Errors
 pub suberror IndexError {
@@ -25,11 +40,13 @@ pub suberror IndexError {
   Truncated(String)
   InvalidLength(String)
   ChecksumMismatch(UInt64, UInt64)
+  Spectrum(@spectrum.SpectrumError)
 }
 
 // Types and methods
 pub(all) struct FingerprintIndex {
   config : @fingerprint.HashConfig
+  profile : ProcessingProfile
   tracks : Array[TrackInfo]
   postings : Map[UInt64, Array[IndexPosting]]
   mut posting_count : Int
@@ -47,6 +64,15 @@ pub(all) struct IndexPosting {
   delta_frames : Int
   target_bin : Int
 }
+
+pub(all) struct ProcessingProfile {
+  sample_rate : Int
+  window_length : Int
+  hop_size : Int
+  peak_config : @spectrum.PeakConfig
+  hash_config : @fingerprint.HashConfig
+}
+pub fn ProcessingProfile::new(Int, Int, Int, @spectrum.PeakConfig, @fingerprint.HashConfig) -> Self raise IndexError
 
 pub(all) struct TrackInfo {
   track_id : Int

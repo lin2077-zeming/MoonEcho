@@ -109,10 +109,11 @@ let encoded = @fingerprint.encode(fp)
 The exact byte layout is documented in
 [docs/fingerprint-v1.md](docs/fingerprint-v1.md).
 
-## Index Snapshot v1
+## Index Snapshot v2
 
 The index layer maps each fingerprint hash to track/frame/bin postings and
-persists the full structure with a deterministic binary snapshot:
+persists the full structure plus its preprocessing profile with a deterministic
+binary snapshot:
 
 ```moonbit nocheck
 let index = @index.FingerprintIndex::new(config)
@@ -121,7 +122,8 @@ let snapshot = @index.encode(index)
 let restored = @index.decode(snapshot)
 ```
 
-The exact byte layout is documented in [docs/index-v1.md](docs/index-v1.md).
+The exact byte layout is documented in [docs/index-v2.md](docs/index-v2.md).
+Legacy v1 snapshots remain readable; see [docs/index-v1.md](docs/index-v1.md).
 
 ## Candidate Matching
 

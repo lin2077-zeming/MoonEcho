@@ -48,9 +48,9 @@ priv struct IndexOptions {
 priv struct MatchOptions {
   index_path : String
   input : String
-  sample_rate : Int
-  window_length : Int
-  hop_size : Int
+  sample_rate : Int?
+  window_length : Int?
+  hop_size : Int?
   top_k : Int
   min_votes : Int
   min_confidence : Double
@@ -135,7 +135,21 @@ fn run_index(args : Array[String]) -> String raise CliError {
     spectrogram.magnitudes.length(),
     spectrogram.frequencies.length(),
   )
-  let index = @index.FingerprintIndex::new(hash_config)
+  let peak_config = default_peak_config_or_cli()
+  let profile = try
+    @index.ProcessingProfile::new(
+      options.sample_rate,
+      options.window_length,
+      options.hop_size,
+      peak_config,
+      hash_config,
+    )
+  catch {
+    err => raise Index(err)
+  } noraise {
+    value => value
+  }
+  let index = @index.with_profile(profile)
   add_track_or_cli(index, options.track_id, options.track_name, fingerprint)
   let snapshot = @index.encode(index)
   write_bytes(options.output, snapshot)
@@ -149,18 +163,19 @@ fn run_index(args : Array[String]) -> String raise CliError {
 fn run_match(args : Array[String]) -> String raise CliError {
   let options = parse_match_options(args)
   let index = index_or_cli(read_bytes(options.index_path))
+  check_match_profile_options(options, index.profile)
   let query_audio = audio_or_cli(
     bytes_to_ints(read_bytes(options.input)),
-    options.sample_rate,
+    index.profile.sample_rate,
   )
   let spectrogram = spectrogram_or_cli(
     query_audio,
-    spectrum_config_or_cli(options.window_length, options.hop_size),
+    spectrum_config_or_cli(index.profile.window_length, index.profile.hop_size),
   )
-  let peaks = peaks_or_cli(spectrogram, default_peak_config_or_cli())
+  let peaks = peaks_or_cli(spectrogram, index.profile.peak_config)
   let query = fingerprint_or_cli(
     peaks,
-    index.config,
+    index.profile.hash_config,
     spectrogram.magnitudes.length(),
     spectrogram.frequencies.length(),
   )
@@ -178,8 +193,8 @@ fn run_match(args : Array[String]) -> String raise CliError {
   }
   let best = result.candidates[0]
   let offset_seconds = best.offset_frames.to_double() *
-    options.hop_size.to_double() /
-    options.sample_rate.to_double()
+    index.profile.hop_size.to_double() /
+    index.profile.sample_rate.to_double()
   "status: \{@match.status_label(result.status)}\n" +
   "top_track: \{best.name}\n" +
   "offset_frames: \{best.offset_frames}\n" +
@@ -245,9 +260,9 @@ fn parse_index_options(args : Array[String]) -> IndexOptions raise CliError {
 fn parse_match_options(args : Array[String]) -> MatchOptions raise CliError {
   let mut index_path : String? = None
   let mut input : String? = None
-  let mut sample_rate = 16000
-  let mut window_length = 1024
-  let mut hop_size = 512
+  let mut sample_rate : Int? = None
+  let mut window_length : Int? = None
+  let mut hop_size : Int? = None
   let mut top_k = 5
   let mut min_votes = 3
   let mut min_confidence = 0.05
@@ -262,13 +277,15 @@ fn parse_match_options(args : Array[String]) -> MatchOptions raise CliError {
       input = Some(require_value(args, cursor, option))
       cursor = cursor + 2
     } else if option == "--sample-rate" {
-      sample_rate = parse_int(require_value(args, cursor, option), option)
+      sample_rate = Some(parse_int(require_value(args, cursor, option), option))
       cursor = cursor + 2
     } else if option == "--window-length" {
-      window_length = parse_int(require_value(args, cursor, option), option)
+      window_length = Some(
+        parse_int(require_value(args, cursor, option), option),
+      )
       cursor = cursor + 2
     } else if option == "--hop-size" {
-      hop_size = parse_int(require_value(args, cursor, option), option)
+      hop_size = Some(parse_int(require_value(args, cursor, option), option))
       cursor = cursor + 2
     } else if option == "--top-k" {
       top_k = parse_int(require_value(args, cursor, option), option)
@@ -300,6 +317,40 @@ fn parse_match_options(args : Array[String]) -> MatchOptions raise CliError {
         min_margin,
       }
     _ => raise Argument("match requires --index and --input")
+  }
+}
+
+///|
+fn check_match_profile_options(
+  options : MatchOptions,
+  profile : @index.ProcessingProfile,
+) -> Unit raise CliError {
+  match options.sample_rate {
+    Some(value) =>
+      if value != profile.sample_rate {
+        raise Argument(
+          "--sample-rate \{value} conflicts with index profile \{profile.sample_rate}",
+        )
+      }
+    None => ()
+  }
+  match options.window_length {
+    Some(value) =>
+      if value != profile.window_length {
+        raise Argument(
+          "--window-length \{value} conflicts with index profile \{profile.window_length}",
+        )
+      }
+    None => ()
+  }
+  match options.hop_size {
+    Some(value) =>
+      if value != profile.hop_size {
+        raise Argument(
+          "--hop-size \{value} conflicts with index profile \{profile.hop_size}",
+        )
+      }
+    None => ()
   }
 }
 

@@ -1,4 +1,5 @@
 import {
   "lin2077-zeming/moonecho/src/fingerprint",
+  "lin2077-zeming/moonecho/src/spectrum",
   "moonbitlang/core/encoding/utf8",
 }

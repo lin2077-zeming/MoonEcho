@@ -58,10 +58,11 @@ Optional options:
 - `--min-confidence <f>`
 - `--min-margin <f>`
 
-The CLI uses deterministic defaults so an index and query created with the same
-options can be compared. The current index snapshot v1 stores fingerprint hash
-configuration but not STFT window/hop settings, so callers should keep those
-settings consistent between index and match.
+Index snapshots are written as v2 and carry the full processing profile.
+`match` uses the embedded sample rate, window length, hop size, peak config, and
+hash config automatically. If the caller explicitly supplies `--sample-rate`,
+`--window-length`, or `--hop-size` with values that conflict with the profile,
+the command fails instead of silently producing a mismatched query.
 
 ## Bench
 
