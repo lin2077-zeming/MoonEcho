@@ -129,6 +129,22 @@ pub fn default_profile(
 }
 
 ///|
+pub fn profile_equal(
+  left : ProcessingProfile,
+  right : ProcessingProfile,
+) -> Bool {
+  left.sample_rate == right.sample_rate &&
+  left.window_length == right.window_length &&
+  left.hop_size == right.hop_size &&
+  left.peak_config.frequency_radius == right.peak_config.frequency_radius &&
+  left.peak_config.time_radius == right.peak_config.time_radius &&
+  left.peak_config.min_magnitude == right.peak_config.min_magnitude &&
+  left.peak_config.relative_threshold == right.peak_config.relative_threshold &&
+  left.peak_config.max_peaks_per_frame == right.peak_config.max_peaks_per_frame &&
+  hash_config_equal(left.hash_config, right.hash_config)
+}
+
+///|
 pub fn FingerprintIndex::new(
   config : @fingerprint.HashConfig,
 ) -> FingerprintIndex {

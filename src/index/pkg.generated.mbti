@@ -29,6 +29,8 @@ pub let index_version_v1 : Int
 
 pub let index_version_v2 : Int
 
+pub fn profile_equal(ProcessingProfile, ProcessingProfile) -> Bool
+
 pub fn with_profile(ProcessingProfile) -> FingerprintIndex
 
 // Errors

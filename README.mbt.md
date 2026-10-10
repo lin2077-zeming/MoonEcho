@@ -2,7 +2,9 @@
 
 MoonEcho is a local-first acoustic fingerprint search and audio alignment toolkit written in MoonBit.
 
-The project is currently in milestone `M1`: the audio adapter is in place, and the next work is spectrum and fingerprint processing.
+The project is currently in milestone `M4`: the audio, spectrum, fingerprint,
+index, matching, alignment, benchmark, and automation CLI layers are in place.
+The remaining milestone work is the WASM demo and release materials.
 
 ## Status
 
@@ -33,8 +35,11 @@ CLI:
 ```bash
 moon run cmd/moonecho -- version
 moon run cmd/moonecho -- index --input track.wav --output track.idx --name demo
+moon run cmd/moonecho -- index --manifest tracks.tsv --output library.idx
+moon run cmd/moonecho -- index --input clip.wav --output library.idx --id 2 --append
 moon run cmd/moonecho -- match --index track.idx --input clip.wav
-moon run cmd/moonecho -- bench
+moon run cmd/moonecho -- info --index library.idx --json
+moon run cmd/moonecho -- bench --json
 ```
 
 Expected CLI output:
@@ -142,12 +147,17 @@ Sample-accurate refinement is documented in [docs/alignment.md](docs/alignment.m
 ## CLI
 
 The command-line façade wires audio decoding, spectrum extraction, fingerprint
-encoding, index snapshots, and candidate matching into two commands:
+encoding, index snapshots, batch/append indexing, inspection, candidate
+matching, and benchmarks into one executable:
 
 ```text
-moonecho index
-moonecho match
+moonecho index   # single track, manifest, or append
+moonecho match   # search and optional sample alignment
+moonecho info    # inspect snapshot metadata and tracks
+moonecho bench   # robustness and performance report
 ```
+
+`index`, `match`, `info`, and `bench` support `--json` for automation.
 
 See [docs/cli.md](docs/cli.md) for all options and reproducibility notes.
 
