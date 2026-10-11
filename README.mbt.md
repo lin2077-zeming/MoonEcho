@@ -10,6 +10,7 @@ commands and release checks are documented in [docs/release.md](docs/release.md)
 
 - Project name: MoonEcho / 月响
 - Version: 0.1.0
+- Mooncakes.io: https://mooncakes.io/docs/#/lin2077-zeming/moonecho/
 - Main language: MoonBit
 - Target: native and WebAssembly
 - License: Apache-2.0
@@ -34,6 +35,12 @@ cd MoonEcho
 moon update
 moon check --target all --deny-warn
 moon test --target native --deny-warn
+```
+
+Use the published package in another MoonBit module:
+
+```bash
+moon add lin2077-zeming/moonecho@0.1.0
 ```
 
 ## Quick Start

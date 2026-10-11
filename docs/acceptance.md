@@ -62,6 +62,9 @@ generated locally and requires no external audio assets.
 
 ## Submission State
 
-The package metadata and archive are prepared for
-`lin2077-zeming/moonecho@0.1.0`. Publication is performed with `moon login`
-and `moon publish` as documented in [release.md](release.md).
+`lin2077-zeming/moonecho@0.1.0` is published on Mooncakes.io:
+
+https://mooncakes.io/docs/#/lin2077-zeming/moonecho/
+
+The published dependency set is `moonbitlang/x@0.4.45`,
+`Ridge-Lab/moonwavkit@0.1.3`, and `chgttyyr/MoonSpectrum@0.2.2`.

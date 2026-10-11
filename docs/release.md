@@ -1,5 +1,11 @@
 # Release and Acceptance Checklist
 
+## Publication Status
+
+`lin2077-zeming/moonecho@0.1.0` was published to Mooncakes.io on 2026-10-11:
+
+https://mooncakes.io/docs/#/lin2077-zeming/moonecho/
+
 ## Mooncakes.io Preparation
 
 The module metadata is in `moon.mod`:

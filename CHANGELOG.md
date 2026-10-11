@@ -11,3 +11,4 @@
 - Added robustness benchmarks and deterministic synthetic audio fixtures.
 - Added a browser `wasm-gc` matching workbench and Node smoke test.
 - Added Mooncakes.io release and third-party license documentation.
+- Published `lin2077-zeming/moonecho@0.1.0` to Mooncakes.io.
