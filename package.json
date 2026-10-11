@@ -1,0 +1,13 @@
+{
+  "name": "moonecho-demo",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build:demo": "node scripts/build-demo.mjs",
+    "serve:demo": "node scripts/serve-demo.mjs",
+    "smoke:demo": "node scripts/smoke-wasm-demo.mjs"
+  }
+}

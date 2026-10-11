@@ -2,9 +2,9 @@
 
 MoonEcho is a local-first acoustic fingerprint search and audio alignment toolkit written in MoonBit.
 
-The project is currently in milestone `M4`: the audio, spectrum, fingerprint,
-index, matching, alignment, benchmark, and automation CLI layers are in place.
-The remaining milestone work is the WASM demo and release materials.
+The project is currently in milestone `M5`: the core library, native CLI,
+benchmarks, WASM browser workbench, and release materials are in place. The
+remaining external step is the authenticated Mooncakes.io publication.
 
 ## Status
 
@@ -41,6 +41,17 @@ moon run cmd/moonecho -- match --index track.idx --input clip.wav
 moon run cmd/moonecho -- info --index library.idx --json
 moon run cmd/moonecho -- bench --json
 ```
+
+WASM browser demo:
+
+```bash
+npm run build:demo
+npm run serve:demo
+```
+
+Open `http://127.0.0.1:4173`, load the built-in chirp corpus, build the index,
+and run the query. The demo requires WebAssembly GC support; see
+[docs/wasm-demo.md](docs/wasm-demo.md).
 
 Expected CLI output:
 
@@ -161,8 +172,35 @@ moonecho bench   # robustness and performance report
 
 See [docs/cli.md](docs/cli.md) for all options and reproducibility notes.
 
+## Browser Demo
+
+The WASM workbench is a genuine `wasm-gc` library boundary. JavaScript loads
+WAV bytes through two small host functions; the MoonBit module performs the
+fingerprint pipeline and sample alignment.
+
+The page includes a deterministic self-contained corpus without bundled audio
+assets. It can also accept three user WAV files: two library tracks and one
+query clip.
+
+![MoonEcho WASM workbench](docs/assets/wasm-demo.png)
+
+The exact ABI and verification commands are documented in
+[docs/wasm-demo.md](docs/wasm-demo.md).
+
 The robustness and benchmark harness is documented in
 [docs/benchmark.md](docs/benchmark.md).
+
+Dependency licenses are listed in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The Mooncakes.io release
+checklist is in [docs/release.md](docs/release.md).
+
+The final acceptance map is in [docs/acceptance.md](docs/acceptance.md), and
+the version history is in [CHANGELOG.md](CHANGELOG.md).
+
+## License
+
+MoonEcho is released under the Apache-2.0 license. Third-party package notices
+are recorded in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Roadmap
 

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="MoonEcho browser workbench for local acoustic fingerprint matching."
+    >
+    <title>MoonEcho WASM Workbench</title>
+    <link rel="stylesheet" href="./app.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="MoonEcho workbench home">
+          <span class="brand-mark">ME</span>
+          <span>
+            <strong>MoonEcho</strong>
+            <small>Acoustic fingerprint workbench</small>
+          </span>
+        </a>
+        <div class="runtime-status" aria-live="polite">
+          <span class="runtime-dot" id="runtime-dot"></span>
+          <span id="runtime-status">Loading WASM runtime</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="workspace" aria-labelledby="workspace-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Local browser pipeline</p>
+              <h1 id="workspace-title">Fingerprint match workbench</h1>
+            </div>
+            <button class="button button-secondary" id="load-demo" type="button">
+              Load built-in demo
+            </button>
+          </div>
+
+          <div class="audio-grid">
+            <article class="audio-panel" id="panel-a">
+              <div class="audio-heading">
+                <div>
+                  <span class="slot-tag">A</span>
+                  <h2>Library reference</h2>
+                </div>
+                <label class="file-control">
+                  <span>Choose WAV</span>
+                  <input id="file-a" type="file" accept=".wav,audio/wav,audio/x-wav">
+                </label>
+              </div>
+              <canvas id="wave-a" width="480" height="128"></canvas>
+              <dl class="audio-stats">
+                <div><dt>File</dt><dd id="name-a">No file</dd></div>
+                <div><dt>Rate</dt><dd id="rate-a">-</dd></div>
+                <div><dt>Frames</dt><dd id="frames-a">-</dd></div>
+                <div><dt>Duration</dt><dd id="duration-a">-</dd></div>
+              </dl>
+            </article>
+
+            <article class="audio-panel" id="panel-b">
+              <div class="audio-heading">
+                <div>
+                  <span class="slot-tag">B</span>
+                  <h2>Library confuser</h2>
+                </div>
+                <label class="file-control">
+                  <span>Choose WAV</span>
+                  <input id="file-b" type="file" accept=".wav,audio/wav,audio/x-wav">
+                </label>
+              </div>
+              <canvas id="wave-b" width="480" height="128"></canvas>
+              <dl class="audio-stats">
+                <div><dt>File</dt><dd id="name-b">No file</dd></div>
+                <div><dt>Rate</dt><dd id="rate-b">-</dd></div>
+                <div><dt>Frames</dt><dd id="frames-b">-</dd></div>
+                <div><dt>Duration</dt><dd id="duration-b">-</dd></div>
+              </dl>
+            </article>
+
+            <article class="audio-panel audio-panel-query" id="panel-query">
+              <div class="audio-heading">
+                <div>
+                  <span class="slot-tag slot-tag-query">Q</span>
+                  <h2>Query clip</h2>
+                </div>
+                <label class="file-control">
+                  <span>Choose WAV</span>
+                  <input id="file-query" type="file" accept=".wav,audio/wav,audio/x-wav">
+                </label>
+              </div>
+              <canvas id="wave-query" width="480" height="128"></canvas>
+              <dl class="audio-stats">
+                <div><dt>File</dt><dd id="name-query">No file</dd></div>
+                <div><dt>Rate</dt><dd id="rate-query">-</dd></div>
+                <div><dt>Frames</dt><dd id="frames-query">-</dd></div>
+                <div><dt>Duration</dt><dd id="duration-query">-</dd></div>
+              </dl>
+            </article>
+          </div>
+        </section>
+
+        <section class="action-bar" aria-label="Workbench actions">
+          <div class="action-buttons">
+            <button class="button button-primary" id="build-index" type="button">
+              Build index
+            </button>
+            <button class="button button-primary" id="run-match" type="button">
+              Match query
+            </button>
+            <button class="button button-quiet" id="reset-demo" type="button">
+              Reset
+            </button>
+          </div>
+          <p class="action-status" id="action-status" aria-live="polite">
+            Waiting for the built-in corpus.
+          </p>
+        </section>
+
+        <section class="results-layout" aria-labelledby="results-title">
+          <section class="result-summary" id="result-summary">
+            <div class="result-heading">
+              <div>
+                <p class="eyebrow">Top result</p>
+                <h2 id="results-title">No query yet</h2>
+              </div>
+              <span class="result-badge is-idle" id="result-badge">Idle</span>
+            </div>
+            <p class="result-caption" id="result-caption">
+              Build an index to populate the search structure.
+            </p>
+            <div class="result-metrics">
+              <div>
+                <span>Reference</span>
+                <strong id="metric-track">-</strong>
+              </div>
+              <div>
+                <span>Offset</span>
+                <strong id="metric-offset">-</strong>
+              </div>
+              <div>
+                <span>Confidence</span>
+                <strong id="metric-confidence">-</strong>
+              </div>
+              <div>
+                <span>Correlation</span>
+                <strong id="metric-correlation">-</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="result-details" aria-labelledby="details-title">
+            <div class="detail-heading">
+              <h2 id="details-title">Index and query details</h2>
+              <span id="match-time">-</span>
+            </div>
+            <dl class="detail-grid">
+              <div><dt>Indexed tracks</dt><dd id="metric-tracks">0</dd></div>
+              <div><dt>Postings</dt><dd id="metric-postings">0</dd></div>
+              <div><dt>Query hashes</dt><dd id="metric-hashes">0</dd></div>
+              <div><dt>Candidate postings</dt><dd id="metric-considered">0</dd></div>
+              <div><dt>Votes</dt><dd id="metric-votes">0</dd></div>
+              <div><dt>Candidates</dt><dd id="metric-candidates">0</dd></div>
+            </dl>
+          </section>
+        </section>
+
+        <section class="timeline-panel" aria-labelledby="timeline-title">
+          <div class="timeline-heading">
+            <div>
+              <p class="eyebrow">Reference timeline</p>
+              <h2 id="timeline-title">Aligned query window</h2>
+            </div>
+            <span id="timeline-offset">-</span>
+          </div>
+          <canvas id="timeline" width="1120" height="150"></canvas>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>MoonEcho 0.1.0</span>
+        <span id="wasm-file-status">moonecho.wasm not loaded</span>
+      </footer>
+    </div>
+  </body>
+</html>

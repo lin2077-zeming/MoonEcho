@@ -23,7 +23,7 @@ keywords = [ "audio", "fingerprint", "search", "alignment", "wasm" ]
 
 preferred_target = "wasm"
 
-description = "Local-first acoustic fingerprint search and audio alignment toolkit for MoonBit."
+description = "Local-first acoustic fingerprint search, alignment, and WASM workbench for MoonBit."
 
 import {
   "Ridge-Lab/moonwavkit@0.1.3",

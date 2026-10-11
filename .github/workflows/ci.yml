@@ -24,6 +24,11 @@ jobs:
         with:
           version: ${{ env.MOONBIT_VERSION }}
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Show MoonBit version
         run: moon version --all
 
@@ -41,6 +46,11 @@ jobs:
 
       - name: Test native target
         run: moon test --target native --deny-warn
+
+      - name: Build and smoke-test WASM demo
+        run: |
+          npm run build:demo
+          npm run smoke:demo
 
       - name: Run CLI
         run: moon run cmd/moonecho
