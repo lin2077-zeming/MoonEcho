@@ -41,6 +41,9 @@ jobs:
       - name: Check all targets
         run: moon check --target all --deny-warn
 
+      - name: Build all supported targets
+        run: moon build --target all --release --deny-warn
+
       - name: Test wasm target
         run: moon test --target wasm --deny-warn
 

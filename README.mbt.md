@@ -2,9 +2,9 @@
 
 MoonEcho is a local-first acoustic fingerprint search and audio alignment toolkit written in MoonBit.
 
-The project is currently in milestone `M5`: the core library, native CLI,
-benchmarks, WASM browser workbench, and release materials are in place. The
-remaining external step is the authenticated Mooncakes.io publication.
+The project is in milestone `M5`: the core library, native CLI, benchmarks,
+WASM browser workbench, and release materials are complete. Publication
+commands and release checks are documented in [docs/release.md](docs/release.md).
 
 ## Status
 
@@ -15,6 +15,26 @@ remaining external step is the authenticated Mooncakes.io publication.
 - License: Apache-2.0
 - Audio input dependency: `Ridge-Lab/moonwavkit@0.1.3`
 - Spectrum dependency: `chgttyyr/MoonSpectrum@0.2.2`
+
+## Requirements
+
+- MoonBit toolchain `0.10.14` or newer; CI is pinned to
+  `0.10.14+7d59c7ec9`
+- Node.js `22` or newer for the WASM browser demo and its smoke test
+
+Install MoonBit from
+[moonbitlang.com/download](https://www.moonbitlang.com/download/). The native
+CLI does not require Node.js.
+
+## Install
+
+```bash
+git clone https://github.com/lin2077-zeming/MoonEcho.git
+cd MoonEcho
+moon update
+moon check --target all --deny-warn
+moon test --target native --deny-warn
+```
 
 ## Quick Start
 
@@ -201,6 +221,16 @@ the version history is in [CHANGELOG.md](CHANGELOG.md).
 
 MoonEcho is released under the Apache-2.0 license. Third-party package notices
 are recorded in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## Design References
+
+MoonEcho's landmark-style peak pairing and offset voting are based on the
+published acoustic fingerprinting approach introduced by Avery Wang for
+Shazam. The implementation is original MoonBit code.
+
+The high-level algorithm was also informed by the open-source Dejavu project:
+https://github.com/worldveil/dejavu. No Dejavu source code was copied or
+translated. Dejavu is distributed under the MIT license.
 
 ## Roadmap
 

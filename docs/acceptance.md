@@ -62,6 +62,6 @@ generated locally and requires no external audio assets.
 
 ## Submission State
 
-The package is prepared for Mooncakes.io publication at version `0.1.0`.
-Actual publication requires `moon login` with the `lin2077-zeming` account and
-an explicit authenticated `moon publish`.
+The package metadata and archive are prepared for
+`lin2077-zeming/moonecho@0.1.0`. Publication is performed with `moon login`
+and `moon publish` as documented in [release.md](release.md).
