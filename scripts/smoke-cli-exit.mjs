@@ -1,17 +1,28 @@
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
-const executable = resolve(
+const executableDir = resolve(
   root,
-  process.platform === "win32"
-    ? "_build/native/release/build/cmd/moonecho-cli/moonecho-cli.exe"
-    : "_build/native/release/build/cmd/moonecho-cli/moonecho-cli",
+  "_build/native/release/build/cmd/moonecho-cli",
 );
+const executableCandidates = existsSync(executableDir)
+  ? readdirSync(executableDir, { withFileTypes: true })
+      .filter((entry) => entry.isFile())
+      .map((entry) => resolve(executableDir, entry.name))
+      .filter((path) => {
+        if (process.platform === "win32") {
+          return path.endsWith(".exe");
+        }
+        const mode = statSync(path).mode;
+        return (mode & 0o111) !== 0 && !/\.(lib|exp|pdb)$/i.test(path);
+      })
+  : [];
+const executable = executableCandidates[0];
 
-if (!existsSync(executable)) {
-  console.error(`CLI executable is missing: ${executable}`);
+if (!executable) {
+  console.error(`CLI executable is missing in: ${executableDir}`);
   process.exit(1);
 }
 
