@@ -2,7 +2,7 @@
 
 ## Publication Status
 
-The current module version is `0.1.1`. Verify the live publication state with:
+The current module version is `0.1.2`. Verify the live publication state with:
 
 https://mooncakes.io/docs/#/lin2077-zeming/moonecho/
 
@@ -15,7 +15,7 @@ The machine-readable status endpoint is:
 The module metadata is in `moon.mod`:
 
 - module name: `lin2077-zeming/moonecho`
-- version: `0.1.1`
+- version: `0.1.2`
 - license: `Apache-2.0`
 - repository: `https://github.com/lin2077-zeming/MoonEcho`
 - readme: `README.mbt.md`
@@ -81,8 +81,8 @@ The release candidate is ready when:
 After the release checks pass:
 
 ```bash
-git tag -a v0.1.1 -m "MoonEcho v0.1.1"
-git push origin v0.1.1
+git tag -a v0.1.2 -m "MoonEcho v0.1.2"
+git push origin v0.1.2
 ```
 
 The tag is a marker only. The Mooncakes.io version comes from `moon.mod`.
