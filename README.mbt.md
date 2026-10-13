@@ -9,7 +9,7 @@ commands and release checks are documented in [docs/release.md](docs/release.md)
 ## Status
 
 - Project name: MoonEcho / 月响
-- Version: 0.1.2
+- Version: 0.1.3
 - Mooncakes.io: https://mooncakes.io/docs/#/lin2077-zeming/moonecho/
 - Main language: MoonBit
 - Target: native and WebAssembly
@@ -40,7 +40,7 @@ moon test --target native --deny-warn
 Use the published package in another MoonBit module:
 
 ```bash
-moon add lin2077-zeming/moonecho@0.1.2
+moon add lin2077-zeming/moonecho@0.1.3
 ```
 
 ## Quick Start
@@ -83,7 +83,7 @@ and run the query. The demo requires WebAssembly GC support; see
 Expected CLI output:
 
 ```text
-MoonEcho (月响) v0.1.2: Local-first acoustic fingerprint search and audio alignment toolkit
+MoonEcho (月响) v0.1.3: Local-first acoustic fingerprint search and audio alignment toolkit
 ```
 
 ## Minimal API

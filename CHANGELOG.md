@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3 - 2026-10-13
+
+- Made the CLI exit-code smoke test discover the native executable on both
+  Windows and Linux.
+
 ## 0.1.2 - 2026-10-13
 
 - Removed the module root package facade so `moon bundle --all` runs
