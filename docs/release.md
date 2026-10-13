@@ -45,16 +45,13 @@ command currently exits non-zero afterward. Treat the server status text as the
 validation result for that toolchain, and use the real authenticated publish
 command only after the package and CI checks are green.
 
-The same `moonc` release has a reproducible upstream `moon bundle --all`
-planner panic for even a newly generated empty module:
+The module intentionally has no root package. Project metadata lives in
+`src/project`; this avoids the 0.10.15 bundle planner conflict between a root
+library artifact and a child executable package. The CI build gate includes:
 
-```text
-declared execution output has multiple producers: .../<module>.core
+```bash
+moon bundle --all --release --deny-warn
 ```
-
-MoonEcho therefore uses `moon build --target all --release --deny-warn` as the
-CI build gate. The bundle command remains documented here for evaluation, but
-the panic is a toolchain issue rather than a project source failure.
 
 ## Required Checks
 
@@ -63,6 +60,7 @@ Run from the repository root:
 ```bash
 moon fmt --check
 moon check --target all --deny-warn
+moon bundle --all --release --deny-warn
 moon test --target wasm --deny-warn
 moon test --target native --deny-warn
 npm run build:demo

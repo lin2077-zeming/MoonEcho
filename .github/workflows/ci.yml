@@ -44,6 +44,9 @@ jobs:
       - name: Build all supported targets
         run: moon build --target all --release --deny-warn
 
+      - name: Bundle all supported targets
+        run: moon bundle --all --release --deny-warn
+
       - name: Build native CLI
         run: moon build cmd/moonecho-cli --target native --release --deny-warn
 

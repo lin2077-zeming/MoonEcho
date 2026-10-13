@@ -41,6 +41,7 @@ generated locally and requires no external audio assets.
 ## Acceptance Evidence
 
 - local checks: `moon check --target all --deny-warn`
+- packaging: `moon bundle --all --release --deny-warn`
 - tests: `moon test --target wasm --deny-warn` and
   `moon test --target native --deny-warn`
 - demo: `npm run smoke:demo` verifies the expected reference, offset,
@@ -60,10 +61,9 @@ generated locally and requires no external audio assets.
   against a licensed music collection
 - the native backend does not build the browser-only `src/web` package
 
-`moon bundle --all` currently panics in `moon 0.10.15` even for a fresh empty
-module because its execution planner declares multiple producers for the root
-`.core` artifact. `moon build --target all --release --deny-warn` is used as
-the project build gate until the upstream planner issue is fixed.
+The module root is package-free by design. Project metadata lives in
+`src/project`, allowing `moon bundle --all` to operate without the 0.10.15
+root-package/core-output collision.
 
 ## Submission State
 

@@ -91,7 +91,7 @@ MoonEcho (月响) v0.1.1: Local-first acoustic fingerprint search and audio alig
 ```moonbit nocheck
 ///|
 fn main {
-  println(status())
+  println(@project.status())
 }
 ```
 

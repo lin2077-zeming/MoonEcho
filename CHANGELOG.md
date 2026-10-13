@@ -9,6 +9,8 @@
 - Renamed the executable package directory to `cmd/moonecho-cli` to avoid
   duplicate core output names.
 - Added CLI exit-code smoke coverage to CI.
+- Removed the module root package facade so `moon bundle --all` can run under
+  MoonBit 0.10.15 without duplicate `moonecho.core` producers.
 
 ## 0.1.0 - 2026-10-11
 
