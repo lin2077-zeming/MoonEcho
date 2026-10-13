@@ -1,5 +1,5 @@
 ///|
 fn main {
   println("MoonEcho basic example")
-  println(@moonecho.status())
+  println(@project.status())
 }

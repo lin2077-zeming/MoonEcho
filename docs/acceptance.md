@@ -24,7 +24,7 @@ Native CLI:
 ```bash
 moon check --target all --deny-warn
 moon test --target native --deny-warn
-moon run cmd/moonecho -- bench --json
+moon run cmd/moonecho-cli -- bench --json
 ```
 
 Browser demo:
@@ -60,9 +60,15 @@ generated locally and requires no external audio assets.
   against a licensed music collection
 - the native backend does not build the browser-only `src/web` package
 
+`moon bundle --all` currently panics in `moon 0.10.15` even for a fresh empty
+module because its execution planner declares multiple producers for the root
+`.core` artifact. `moon build --target all --release --deny-warn` is used as
+the project build gate until the upstream planner issue is fixed.
+
 ## Submission State
 
-`lin2077-zeming/moonecho@0.1.0` is published on Mooncakes.io:
+The current module version is tracked in `moon.mod` and published on
+Mooncakes.io:
 
 https://mooncakes.io/docs/#/lin2077-zeming/moonecho/
 

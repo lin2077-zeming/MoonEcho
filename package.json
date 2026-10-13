@@ -8,6 +8,7 @@
   "scripts": {
     "build:demo": "node scripts/build-demo.mjs",
     "serve:demo": "node scripts/serve-demo.mjs",
-    "smoke:demo": "node scripts/smoke-wasm-demo.mjs"
+    "smoke:demo": "node scripts/smoke-wasm-demo.mjs",
+    "smoke:cli": "node scripts/smoke-cli-exit.mjs"
   }
 }

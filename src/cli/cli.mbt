@@ -42,10 +42,10 @@ priv struct IndexOptions {
   input : String?
   output : String
   track_name : String
-  track_id : Int
-  sample_rate : Int
-  window_length : Int
-  hop_size : Int
+  track_id : Int32
+  sample_rate : Int32
+  window_length : Int32
+  hop_size : Int32
   append : Bool
   manifest : String?
 }
@@ -55,11 +55,11 @@ priv struct MatchOptions {
   index_path : String
   input : String
   track_path : String?
-  sample_rate : Int?
-  window_length : Int?
-  hop_size : Int?
-  top_k : Int
-  min_votes : Int
+  sample_rate : Int32?
+  window_length : Int32?
+  hop_size : Int32?
+  top_k : Int32
+  min_votes : Int32
   min_confidence : Double
   min_margin : Double
 }
@@ -75,7 +75,7 @@ pub fn run(args : Array[String]) -> String raise CliError {
     return usage()
   }
   match args[1] {
-    "version" => "MoonEcho v\{@moonecho.project_version()}"
+    "version" => "MoonEcho v\{@project.project_version()}"
     "help" | "--help" | "-h" => usage()
     "index" => run_index(sub_args(args, 2), has_flag(args, "--json"))
     "match" => run_match(sub_args(args, 2), has_flag(args, "--json"))
@@ -266,7 +266,7 @@ fn parse_info_options(args : Array[String]) -> InfoOptions raise CliError {
 }
 
 ///|
-fn snapshot_version(bytes : Bytes) -> Int {
+fn snapshot_version(bytes : Bytes) -> Int32 {
   if bytes.has_prefix(@index.index_magic_v1()) {
     1
   } else {
@@ -277,10 +277,10 @@ fn snapshot_version(bytes : Bytes) -> Int {
 ///|
 fn add_wav_entry(
   index : @index.FingerprintIndex,
-  track_id : Int,
+  track_id : Int32,
   name : String,
   path : String,
-) -> Int raise CliError {
+) -> Int32 raise CliError {
   let fingerprint = fingerprint_for_profile(path, index.profile)
   add_track_or_cli(index, track_id, name, fingerprint)
   fingerprint.hashes.length()
@@ -309,7 +309,7 @@ fn fingerprint_for_profile(
 fn add_manifest(
   index : @index.FingerprintIndex,
   path : String,
-) -> Int raise CliError {
+) -> Int32 raise CliError {
   let content = try @fs.read_file_to_string(path) catch {
     _ => raise IO("failed to read manifest: \{path}")
   } noraise {
@@ -333,7 +333,7 @@ fn add_manifest(
 }
 
 ///|
-fn parse_bench_options(args : Array[String]) -> Int raise CliError {
+fn parse_bench_options(args : Array[String]) -> Int32 raise CliError {
   let mut repeat = 5
   let mut cursor = 0
   while cursor < args.length() {
@@ -590,9 +590,9 @@ fn parse_match_options(args : Array[String]) -> MatchOptions raise CliError {
   let mut index_path : String? = None
   let mut input : String? = None
   let mut track_path : String? = None
-  let mut sample_rate : Int? = None
-  let mut window_length : Int? = None
-  let mut hop_size : Int? = None
+  let mut sample_rate : Int32? = None
+  let mut window_length : Int32? = None
+  let mut hop_size : Int32? = None
   let mut top_k = 5
   let mut min_votes = 3
   let mut min_confidence = 0.05
@@ -693,7 +693,7 @@ fn check_match_profile_options(
 ///|
 fn require_value(
   args : Array[String],
-  cursor : Int,
+  cursor : Int32,
   option : String,
 ) -> String raise CliError {
   if cursor + 1 >= args.length() {
@@ -703,7 +703,7 @@ fn require_value(
 }
 
 ///|
-fn parse_int(value : String, option : String) -> Int raise CliError {
+fn parse_int(value : String, option : String) -> Int32 raise CliError {
   try @string.parse_int(value) catch {
     _ => raise Argument("invalid integer for \{option}: \{value}")
   } noraise {
@@ -722,8 +722,8 @@ fn parse_double(value : String, option : String) -> Double raise CliError {
 
 ///|
 fn audio_or_cli(
-  bytes : Array[Int],
-  sample_rate : Int,
+  bytes : Array[Int32],
+  sample_rate : Int32,
 ) -> @audio.AudioBuffer raise CliError {
   try @audio.load_wav_mono(bytes, target_sample_rate=sample_rate) catch {
     err => raise Audio(err)
@@ -734,8 +734,8 @@ fn audio_or_cli(
 
 ///|
 fn spectrum_config_or_cli(
-  window_length : Int,
-  hop_size : Int,
+  window_length : Int32,
+  hop_size : Int32,
 ) -> @spectrum.SpectrumConfig raise CliError {
   try @spectrum.SpectrumConfig::new(window_length~, hop_size~) catch {
     err => raise Spectrum(err)
@@ -790,8 +790,8 @@ fn hash_config_or_cli() -> @fingerprint.HashConfig raise CliError {
 fn fingerprint_or_cli(
   peaks : Array[@spectrum.SpectralPeak],
   config : @fingerprint.HashConfig,
-  frame_count : Int,
-  bin_count : Int,
+  frame_count : Int32,
+  bin_count : Int32,
 ) -> @fingerprint.AudioFingerprint raise CliError {
   try @fingerprint.fingerprint(peaks, config, frame_count~, bin_count~) catch {
     err => raise Fingerprint(err)
@@ -803,7 +803,7 @@ fn fingerprint_or_cli(
 ///|
 fn add_track_or_cli(
   index : @index.FingerprintIndex,
-  track_id : Int,
+  track_id : Int32,
   name : String,
   fingerprint : @fingerprint.AudioFingerprint,
 ) -> Unit raise CliError {
@@ -825,8 +825,8 @@ fn index_or_cli(bytes : Bytes) -> @index.FingerprintIndex raise CliError {
 
 ///|
 fn match_config_or_cli(
-  top_k : Int,
-  min_votes : Int,
+  top_k : Int32,
+  min_votes : Int32,
   min_confidence : Double,
   min_margin : Double,
 ) -> @match.MatchConfig raise CliError {
@@ -871,8 +871,8 @@ fn write_bytes(path : String, bytes : Bytes) -> Unit raise CliError {
 }
 
 ///|
-fn bytes_to_ints(bytes : Bytes) -> Array[Int] {
-  let output : Array[Int] = []
+fn bytes_to_ints(bytes : Bytes) -> Array[Int32] {
+  let output : Array[Int32] = []
   for byte in bytes {
     output.push(byte.to_int())
   }
@@ -880,7 +880,7 @@ fn bytes_to_ints(bytes : Bytes) -> Array[Int] {
 }
 
 ///|
-fn sub_args(args : Array[String], start : Int) -> Array[String] {
+fn sub_args(args : Array[String], start : Int32) -> Array[String] {
   let output : Array[String] = []
   for index in start..<args.length() {
     output.push(args[index])
@@ -941,7 +941,7 @@ fn json_escape(value : String) -> String {
 }
 
 ///|
-fn json_number(value : Int) -> String {
+fn json_number(value : Int32) -> String {
   value.to_string()
 }
 
@@ -951,7 +951,7 @@ fn json_number_double(value : Double) -> String {
 }
 
 ///|
-fn json_frequency_distance(value : Int) -> String {
+fn json_frequency_distance(value : Int32) -> String {
   if value < 0 {
     "null"
   } else {
@@ -960,7 +960,7 @@ fn json_frequency_distance(value : Int) -> String {
 }
 
 ///|
-fn frequency_distance_label(value : Int) -> String {
+fn frequency_distance_label(value : Int32) -> String {
   if value < 0 {
     "unlimited"
   } else {
@@ -969,7 +969,7 @@ fn frequency_distance_label(value : Int) -> String {
 }
 
 ///|
-fn json_hex_digit(value : Int) -> Char {
+fn json_hex_digit(value : Int32) -> Char {
   if value < 10 {
     ('0'.to_int() + value).unsafe_to_char()
   } else {

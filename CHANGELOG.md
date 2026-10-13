@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.1 - 2026-10-13
+
+- Fixed CLI error paths to return a non-zero process exit code.
+- Adapted formatting and generated interfaces for MoonBit `0.10.15`.
+- Moved project metadata into `src/project` so CLI and examples do not reverse
+  depend on the module root package.
+- Renamed the executable package directory to `cmd/moonecho-cli` to avoid
+  duplicate core output names.
+- Added CLI exit-code smoke coverage to CI.
+
 ## 0.1.0 - 2026-10-11
 
 - Added WAV/PCM adaptation over MoonWavKit.

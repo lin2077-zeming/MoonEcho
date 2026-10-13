@@ -79,11 +79,11 @@ same manifest produces the same stored index regardless of map iteration order.
 Example:
 
 ```bash
-moon run cmd/moonecho -- index \
+moon run cmd/moonecho-cli -- index \
   --manifest tracks.tsv \
   --output library.idx
 
-moon run cmd/moonecho -- index \
+moon run cmd/moonecho-cli -- index \
   --input audio/new-track.wav \
   --id 3 \
   --name new-track \
@@ -138,8 +138,8 @@ zero candidates. JSON output still contains `status`, `candidates`, and
 profile, track count, posting count, and track list.
 
 ```bash
-moon run cmd/moonecho -- info --index library.idx
-moon run cmd/moonecho -- info --index library.idx --json
+moon run cmd/moonecho-cli -- info --index library.idx
+moon run cmd/moonecho-cli -- info --index library.idx --json
 ```
 
 The processing profile in `info` includes:

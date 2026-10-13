@@ -24,8 +24,8 @@ pub fn error_message(error : AudioError) -> String {
 ///|
 /// Build a validated normalized audio buffer.
 pub fn audio_buffer(
-  channels : Int,
-  sample_rate : Int,
+  channels : Int32,
+  sample_rate : Int32,
   samples : Array[Double],
 ) -> AudioBuffer raise AudioError {
   if channels <= 0 {
@@ -46,7 +46,7 @@ pub fn audio_buffer(
 
 ///|
 /// Decode a RIFF/WAVE byte buffer into normalized interleaved samples.
-pub fn load_wav(bytes : Array[Int]) -> AudioBuffer raise AudioError {
+pub fn load_wav(bytes : Array[Int32]) -> AudioBuffer raise AudioError {
   let decoded = @wav.parse_and_decode(bytes)
   if decoded.ok {
     decoded.float_buffer
@@ -58,8 +58,8 @@ pub fn load_wav(bytes : Array[Int]) -> AudioBuffer raise AudioError {
 ///|
 /// Decode WAV bytes, downmix to mono, and resample to the configured rate.
 pub fn load_wav_mono(
-  bytes : Array[Int],
-  target_sample_rate? : Int = 16000,
+  bytes : Array[Int32],
+  target_sample_rate~ : Int32 = 16000,
 ) -> AudioBuffer raise AudioError {
   let decoded = load_wav(bytes)
   let mono = downmix(decoded)
@@ -68,19 +68,19 @@ pub fn load_wav_mono(
 
 ///|
 /// Number of channels in a normalized buffer.
-pub fn channels(buffer : AudioBuffer) -> Int {
+pub fn channels(buffer : AudioBuffer) -> Int32 {
   buffer.channels
 }
 
 ///|
 /// Sample rate in Hz.
-pub fn sample_rate(buffer : AudioBuffer) -> Int {
+pub fn sample_rate(buffer : AudioBuffer) -> Int32 {
   buffer.sample_rate
 }
 
 ///|
 /// Number of interleaved frames.
-pub fn frame_count(buffer : AudioBuffer) -> Int {
+pub fn frame_count(buffer : AudioBuffer) -> Int32 {
   buffer.frame_count()
 }
 
@@ -135,7 +135,7 @@ pub fn normalize(buffer : AudioBuffer) -> AudioBuffer raise AudioError {
 /// Resample a buffer with linear interpolation.
 pub fn resample(
   buffer : AudioBuffer,
-  target_sample_rate : Int,
+  target_sample_rate : Int32,
 ) -> AudioBuffer raise AudioError {
   let result = @wav.resample_linear(buffer, target_sample_rate)
   if result.ok {

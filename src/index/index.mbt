@@ -1,11 +1,11 @@
 ///|
-pub let index_version_v1 : Int = 1
+pub let index_version_v1 : Int32 = 1
 
 ///|
-pub let index_version_v2 : Int = 2
+pub let index_version_v2 : Int32 = 2
 
 ///|
-pub let index_version : Int = index_version_v2
+pub let index_version : Int32 = index_version_v2
 
 ///|
 pub fn index_magic_v1() -> Bytes {
@@ -24,29 +24,29 @@ pub fn index_magic() -> Bytes {
 
 ///|
 pub(all) struct ProcessingProfile {
-  sample_rate : Int
-  window_length : Int
-  hop_size : Int
+  sample_rate : Int32
+  window_length : Int32
+  hop_size : Int32
   peak_config : @spectrum.PeakConfig
   hash_config : @fingerprint.HashConfig
 }
 
 ///|
 pub(all) struct TrackInfo {
-  track_id : Int
+  track_id : Int32
   name : String
-  frame_count : Int
-  bin_count : Int
-  hash_count : Int
+  frame_count : Int32
+  bin_count : Int32
+  hash_count : Int32
 }
 
 ///|
 pub(all) struct IndexPosting {
-  track_id : Int
-  anchor_frame : Int
-  anchor_bin : Int
-  delta_frames : Int
-  target_bin : Int
+  track_id : Int32
+  anchor_frame : Int32
+  anchor_bin : Int32
+  delta_frames : Int32
+  target_bin : Int32
 }
 
 ///|
@@ -55,15 +55,15 @@ pub(all) struct FingerprintIndex {
   profile : ProcessingProfile
   tracks : Array[TrackInfo]
   postings : Map[UInt64, Array[IndexPosting]]
-  mut posting_count : Int
+  mut posting_count : Int32
 }
 
 ///|
 pub suberror IndexError {
   InvalidArgument(String)
-  DuplicateTrack(Int)
+  DuplicateTrack(Int32)
   InvalidMagic
-  UnsupportedVersion(Int)
+  UnsupportedVersion(Int32)
   Truncated(String)
   InvalidLength(String)
   ChecksumMismatch(UInt64, UInt64)
@@ -87,9 +87,9 @@ pub fn error_message(error : IndexError) -> String {
 
 ///|
 pub fn ProcessingProfile::new(
-  sample_rate : Int,
-  window_length : Int,
-  hop_size : Int,
+  sample_rate : Int32,
+  window_length : Int32,
+  hop_size : Int32,
   peak_config : @spectrum.PeakConfig,
   hash_config : @fingerprint.HashConfig,
 ) -> ProcessingProfile raise IndexError {
@@ -165,7 +165,7 @@ pub fn with_profile(profile : ProcessingProfile) -> FingerprintIndex {
 ///|
 pub fn FingerprintIndex::add_track(
   self : FingerprintIndex,
-  track_id : Int,
+  track_id : Int32,
   name : String,
   fingerprint : @fingerprint.AudioFingerprint,
 ) -> Unit raise IndexError {
@@ -213,12 +213,12 @@ pub fn FingerprintIndex::lookup(
 }
 
 ///|
-pub fn FingerprintIndex::track_count(self : FingerprintIndex) -> Int {
+pub fn FingerprintIndex::track_count(self : FingerprintIndex) -> Int32 {
   self.tracks.length()
 }
 
 ///|
-pub fn FingerprintIndex::posting_count(self : FingerprintIndex) -> Int {
+pub fn FingerprintIndex::posting_count(self : FingerprintIndex) -> Int32 {
   self.posting_count
 }
 
@@ -401,10 +401,10 @@ fn decode_v2(bytes : Bytes) -> FingerprintIndex raise IndexError {
 ///|
 fn decode_records(
   bytes : Bytes,
-  start : Int,
-  track_total : Int,
-  posting_total : Int,
-) -> (Array[TrackInfo], Map[UInt64, Array[IndexPosting]], Int) raise IndexError {
+  start : Int32,
+  track_total : Int32,
+  posting_total : Int32,
+) -> (Array[TrackInfo], Map[UInt64, Array[IndexPosting]], Int32) raise IndexError {
   let tracks : Array[TrackInfo] = []
   let mut offset = start
   for _ in 0..<track_total {
@@ -445,7 +445,7 @@ fn decode_records(
 }
 
 ///|
-fn validate_payload_end(bytes : Bytes, offset : Int) -> Unit raise IndexError {
+fn validate_payload_end(bytes : Bytes, offset : Int32) -> Unit raise IndexError {
   if offset != bytes.length() - 8 {
     raise InvalidLength(
       "expected \{offset} payload bytes, got \{bytes.length() - 8}",
@@ -515,7 +515,7 @@ fn hash_config_equal(
 }
 
 ///|
-fn compare_track_info(left : TrackInfo, right : TrackInfo) -> Int {
+fn compare_track_info(left : TrackInfo, right : TrackInfo) -> Int32 {
   left.track_id - right.track_id
 }
 
@@ -523,7 +523,7 @@ fn compare_track_info(left : TrackInfo, right : TrackInfo) -> Int {
 fn compare_posting_entries(
   left : (UInt64, IndexPosting),
   right : (UInt64, IndexPosting),
-) -> Int {
+) -> Int32 {
   let hash_order = compare_u64(left.0, right.0)
   if hash_order != 0 {
     hash_order
@@ -541,7 +541,7 @@ fn compare_posting_entries(
 }
 
 ///|
-fn compare_u64(left : UInt64, right : UInt64) -> Int {
+fn compare_u64(left : UInt64, right : UInt64) -> Int32 {
   if left < right {
     -1
   } else if left > right {
@@ -559,7 +559,7 @@ fn write_magic(out : Array[Byte], magic : Bytes) -> Unit {
 }
 
 ///|
-fn encode_frequency_distance(distance : Int) -> Int {
+fn encode_frequency_distance(distance : Int32) -> Int32 {
   if distance < 0 {
     0
   } else {
@@ -568,7 +568,7 @@ fn encode_frequency_distance(distance : Int) -> Int {
 }
 
 ///|
-fn decode_frequency_distance(value : Int) -> Int {
+fn decode_frequency_distance(value : Int32) -> Int32 {
   if value == 0 {
     -1
   } else {
@@ -577,13 +577,13 @@ fn decode_frequency_distance(value : Int) -> Int {
 }
 
 ///|
-fn push_u16_le(out : Array[Byte], value : Int) -> Unit {
+fn push_u16_le(out : Array[Byte], value : Int32) -> Unit {
   out.push((value & 0xff).to_byte())
   out.push(((value >> 8) & 0xff).to_byte())
 }
 
 ///|
-fn push_u32_le(out : Array[Byte], value : Int) -> Unit {
+fn push_u32_le(out : Array[Byte], value : Int32) -> Unit {
   for byte_index in 0..<4 {
     out.push(((value >> (byte_index * 8)) & 0xff).to_byte())
   }
@@ -602,13 +602,13 @@ fn push_f64_le(out : Array[Byte], value : Double) -> Unit {
 }
 
 ///|
-fn read_u16_le(bytes : Bytes, offset : Int) -> Int raise IndexError {
+fn read_u16_le(bytes : Bytes, offset : Int32) -> Int32 raise IndexError {
   require_bytes(bytes, offset, 2)
   bytes[offset].to_int() | (bytes[offset + 1].to_int() << 8)
 }
 
 ///|
-fn read_u32_le(bytes : Bytes, offset : Int) -> Int raise IndexError {
+fn read_u32_le(bytes : Bytes, offset : Int32) -> Int32 raise IndexError {
   require_bytes(bytes, offset, 4)
   bytes[offset].to_int() |
   (bytes[offset + 1].to_int() << 8) |
@@ -617,7 +617,7 @@ fn read_u32_le(bytes : Bytes, offset : Int) -> Int raise IndexError {
 }
 
 ///|
-fn read_u64_le(bytes : Bytes, offset : Int) -> UInt64 raise IndexError {
+fn read_u64_le(bytes : Bytes, offset : Int32) -> UInt64 raise IndexError {
   require_bytes(bytes, offset, 8)
   let mut value = 0UL
   for byte_index in 0..<8 {
@@ -627,15 +627,15 @@ fn read_u64_le(bytes : Bytes, offset : Int) -> UInt64 raise IndexError {
 }
 
 ///|
-fn read_f64_le(bytes : Bytes, offset : Int) -> Double raise IndexError {
+fn read_f64_le(bytes : Bytes, offset : Int32) -> Double raise IndexError {
   read_u64_le(bytes, offset).reinterpret_as_double()
 }
 
 ///|
 fn require_bytes(
   bytes : Bytes,
-  offset : Int,
-  length : Int,
+  offset : Int32,
+  length : Int32,
 ) -> Unit raise IndexError {
   if offset < 0 || length < 0 || offset + length > bytes.length() {
     raise Truncated(
@@ -645,7 +645,7 @@ fn require_bytes(
 }
 
 ///|
-fn checksum_bytes(bytes : Bytes, length : Int) -> UInt64 {
+fn checksum_bytes(bytes : Bytes, length : Int32) -> UInt64 {
   let mut checksum = 0xcbf29ce484222325UL
   for index in 0..<length {
     checksum = (checksum ^ bytes[index].to_uint64()) * 0x100000001B3UL

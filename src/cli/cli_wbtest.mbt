@@ -90,7 +90,7 @@ test "match rejects profile-conflicting options" {
 
 ///|
 test "run version and help" {
-  assert_eq(try! run(["moonecho", "version"]), "MoonEcho v0.1.0")
+  assert_eq(try! run(["moonecho", "version"]), "MoonEcho v0.1.1")
   assert_true(try! run(["moonecho", "help"]).contains("moonecho index"))
 }
 
@@ -251,13 +251,13 @@ fn cli_test_push_ascii(out : Array[Byte], value : String) -> Unit {
 }
 
 ///|
-fn cli_test_push_u16(out : Array[Byte], value : Int) -> Unit {
+fn cli_test_push_u16(out : Array[Byte], value : Int32) -> Unit {
   out.push((value & 0xff).to_byte())
   out.push(((value >> 8) & 0xff).to_byte())
 }
 
 ///|
-fn cli_test_push_u32(out : Array[Byte], value : Int) -> Unit {
+fn cli_test_push_u32(out : Array[Byte], value : Int32) -> Unit {
   for byte_index in 0..<4 {
     out.push(((value >> (byte_index * 8)) & 0xff).to_byte())
   }

@@ -1,12 +1,12 @@
 ///|
 pub(all) struct RobustnessConfig {
-  sample_rate : Int
-  window_length : Int
-  hop_size : Int
-  track_frames : Int
-  clip_start : Int
-  clip_frames : Int
-  silence_padding : Int
+  sample_rate : Int32
+  window_length : Int32
+  hop_size : Int32
+  track_frames : Int32
+  clip_start : Int32
+  clip_frames : Int32
+  silence_padding : Int32
   noise_amplitude : Double
 }
 
@@ -15,27 +15,27 @@ pub(all) struct RobustnessCase {
   name : String
   top1_hit : Bool
   strong : Bool
-  expected_offset_frames : Int
-  actual_offset_frames : Int
-  offset_error_frames : Int
-  refined_offset_samples : Int
-  sample_offset_error : Int
+  expected_offset_frames : Int32
+  actual_offset_frames : Int32
+  offset_error_frames : Int32
+  refined_offset_samples : Int32
+  sample_offset_error : Int32
 }
 
 ///|
 pub(all) struct BenchmarkReport {
   cases : Array[RobustnessCase]
-  correct_hits : Int
-  positive_cases : Int
-  negative_cases : Int
-  negative_hits : Int
+  correct_hits : Int32
+  positive_cases : Int32
+  negative_cases : Int32
+  negative_hits : Int32
   mean_offset_error_frames : Double
-  max_offset_error_frames : Int
+  max_offset_error_frames : Int32
   mean_sample_offset_error : Double
-  max_sample_offset_error : Int
-  hash_count : Int
-  posting_count : Int
-  snapshot_bytes : Int
+  max_sample_offset_error : Int32
+  hash_count : Int32
+  posting_count : Int32
+  snapshot_bytes : Int32
   query_median_us : Double
 }
 
@@ -46,14 +46,14 @@ pub suberror BenchmarkError {
 
 ///|
 pub fn RobustnessConfig::new(
-  sample_rate? : Int = 8000,
-  window_length? : Int = 256,
-  hop_size? : Int = 128,
-  track_frames? : Int = 8000,
-  clip_start? : Int = 2048,
-  clip_frames? : Int = 4096,
-  silence_padding? : Int = 128,
-  noise_amplitude? : Double = 0.05,
+  sample_rate~ : Int32 = 8000,
+  window_length~ : Int32 = 256,
+  hop_size~ : Int32 = 128,
+  track_frames~ : Int32 = 8000,
+  clip_start~ : Int32 = 2048,
+  clip_frames~ : Int32 = 4096,
+  silence_padding~ : Int32 = 128,
+  noise_amplitude~ : Double = 0.05,
 ) -> RobustnessConfig raise BenchmarkError {
   if sample_rate <= 0 || window_length <= 0 || hop_size <= 0 {
     raise Build("sample_rate, window_length, and hop_size must be positive")
@@ -132,7 +132,7 @@ pub fn robustness_report(
 ///|
 pub fn benchmark_report(
   config : RobustnessConfig,
-  repeats : Int,
+  repeats : Int32,
 ) -> BenchmarkReport raise BenchmarkError {
   if repeats <= 0 {
     raise Build("repeats must be positive")
@@ -283,8 +283,8 @@ fn match_case(
   track : Array[Double],
   name : String,
   samples : Array[Double],
-  expected_offset_frames : Int,
-  expected_sample_offset : Int,
+  expected_offset_frames : Int32,
+  expected_sample_offset : Int32,
   config : RobustnessConfig,
 ) -> RobustnessCase raise BenchmarkError {
   let query = fingerprint_from_samples(samples, index.config, config)
@@ -359,9 +359,9 @@ fn match_case(
 ///|
 fn summarize(
   cases : Array[RobustnessCase],
-  hash_count : Int,
-  posting_count : Int,
-  snapshot_bytes : Int,
+  hash_count : Int32,
+  posting_count : Int32,
+  snapshot_bytes : Int32,
 ) -> BenchmarkReport {
   let mut correct_hits = 0
   let mut positive_cases = 0
@@ -425,8 +425,8 @@ fn summarize(
 ///|
 fn slice_samples(
   samples : Array[Double],
-  start : Int,
-  count : Int,
+  start : Int32,
+  count : Int32,
 ) -> Array[Double] {
   let output : Array[Double] = []
   let end = if start + count < samples.length() {
@@ -441,7 +441,7 @@ fn slice_samples(
 }
 
 ///|
-fn pad_silence(samples : Array[Double], padding : Int) -> Array[Double] {
+fn pad_silence(samples : Array[Double], padding : Int32) -> Array[Double] {
   let output = Array::make(padding, 0.0)
   for sample in samples {
     output.push(sample)
@@ -474,7 +474,7 @@ fn add_noise(samples : Array[Double], amplitude : Double) -> Array[Double] {
 }
 
 ///|
-fn different_signal(length : Int, sample_rate : Int) -> Array[Double] {
+fn different_signal(length : Int32, sample_rate : Int32) -> Array[Double] {
   try! @mspectrum.sine_wave(
     length~,
     sample_rate=sample_rate.to_double(),
@@ -523,7 +523,7 @@ fn chirp_or_build(
 }
 
 ///|
-fn count_hashes(index : @index.FingerprintIndex) -> Int {
+fn count_hashes(index : @index.FingerprintIndex) -> Int32 {
   let mut total = 0
   for hash in index.postings.keys() {
     ignore(hash)
@@ -536,7 +536,7 @@ fn count_hashes(index : @index.FingerprintIndex) -> Int {
 }
 
 ///|
-fn abs_int(value : Int) -> Int {
+fn abs_int(value : Int32) -> Int32 {
   if value < 0 {
     -value
   } else {

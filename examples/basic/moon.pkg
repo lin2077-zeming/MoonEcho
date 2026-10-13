@@ -1,5 +1,5 @@
 import {
-  "lin2077-zeming/moonecho",
+  "lin2077-zeming/moonecho/src/project",
 }
 
 pkgtype(kind: "executable")

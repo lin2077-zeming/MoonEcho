@@ -1,5 +1,5 @@
 ///|
-fn synthetic_track(length : Int) -> Array[Double] {
+fn synthetic_track(length : Int32) -> Array[Double] {
   Array::makei(length, index => {
     let a = ((index * 37 + 11) % 101).to_double() - 50.0
     let b = ((index * 17 + 5) % 43).to_double() - 21.0
@@ -8,7 +8,11 @@ fn synthetic_track(length : Int) -> Array[Double] {
 }
 
 ///|
-fn slice(samples : Array[Double], start : Int, count : Int) -> Array[Double] {
+fn slice(
+  samples : Array[Double],
+  start : Int32,
+  count : Int32,
+) -> Array[Double] {
   let output : Array[Double] = []
   let end = start + count
   for index in start..<end {

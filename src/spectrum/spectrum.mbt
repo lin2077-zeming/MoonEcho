@@ -13,8 +13,8 @@ pub type Peak = @mspectrum.Peak
 ///|
 /// A selected time-frequency peak from a spectrogram.
 pub(all) struct SpectralPeak {
-  frame : Int
-  bin : Int
+  frame : Int32
+  bin : Int32
   time : Double
   frequency : Double
   magnitude : Double
@@ -23,11 +23,11 @@ pub(all) struct SpectralPeak {
 ///|
 /// Configuration for two-dimensional spectrogram peak extraction.
 pub(all) struct PeakConfig {
-  frequency_radius : Int
-  time_radius : Int
+  frequency_radius : Int32
+  time_radius : Int32
   min_magnitude : Double
   relative_threshold : Double
-  max_peaks_per_frame : Int
+  max_peaks_per_frame : Int32
 }
 
 ///|
@@ -55,11 +55,11 @@ pub fn error_message(error : SpectrumError) -> String {
 ///|
 /// Build a validated peak extraction configuration.
 pub fn PeakConfig::new(
-  frequency_radius? : Int = 2,
-  time_radius? : Int = 0,
-  min_magnitude? : Double = 0.05,
-  relative_threshold? : Double = 0.0,
-  max_peaks_per_frame? : Int = 4,
+  frequency_radius~ : Int32 = 2,
+  time_radius~ : Int32 = 0,
+  min_magnitude~ : Double = 0.05,
+  relative_threshold~ : Double = 0.0,
+  max_peaks_per_frame~ : Int32 = 4,
 ) -> PeakConfig raise SpectrumError {
   if frequency_radius < 0 {
     raise InvalidArgument("frequency_radius must be non-negative")
@@ -88,17 +88,17 @@ pub fn PeakConfig::new(
 ///|
 /// Configuration for STFT and spectrogram computation.
 pub(all) struct SpectrumConfig {
-  window_length : Int
-  hop_size : Int
+  window_length : Int32
+  hop_size : Int32
   window_kind : WindowKind
 }
 
 ///|
 /// Build a validated spectrum configuration.
 pub fn SpectrumConfig::new(
-  window_length? : Int = 1024,
-  hop_size? : Int = 512,
-  window_kind? : WindowKind = @mspectrum.Hann,
+  window_length~ : Int32 = 1024,
+  hop_size~ : Int32 = 512,
+  window_kind~ : WindowKind = @mspectrum.Hann,
 ) -> SpectrumConfig raise SpectrumError {
   if window_length <= 0 {
     raise InvalidArgument("window_length must be positive")

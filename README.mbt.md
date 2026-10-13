@@ -9,7 +9,7 @@ commands and release checks are documented in [docs/release.md](docs/release.md)
 ## Status
 
 - Project name: MoonEcho / 月响
-- Version: 0.1.0
+- Version: 0.1.1
 - Mooncakes.io: https://mooncakes.io/docs/#/lin2077-zeming/moonecho/
 - Main language: MoonBit
 - Target: native and WebAssembly
@@ -20,7 +20,7 @@ commands and release checks are documented in [docs/release.md](docs/release.md)
 ## Requirements
 
 - MoonBit toolchain `0.10.14` or newer; CI is pinned to
-  `0.10.14+7d59c7ec9`
+  `0.10.15+943464bfa`
 - Node.js `22` or newer for the WASM browser demo and its smoke test
 
 Install MoonBit from
@@ -40,7 +40,7 @@ moon test --target native --deny-warn
 Use the published package in another MoonBit module:
 
 ```bash
-moon add lin2077-zeming/moonecho@0.1.0
+moon add lin2077-zeming/moonecho@0.1.1
 ```
 
 ## Quick Start
@@ -48,7 +48,7 @@ moon add lin2077-zeming/moonecho@0.1.0
 ```bash
 moon check
 moon test
-moon run cmd/moonecho
+moon run cmd/moonecho-cli
 moon run examples/basic
 moon run examples/wav-adapter
 moon run examples/spectrum
@@ -60,13 +60,13 @@ moon run examples/match
 CLI:
 
 ```bash
-moon run cmd/moonecho -- version
-moon run cmd/moonecho -- index --input track.wav --output track.idx --name demo
-moon run cmd/moonecho -- index --manifest tracks.tsv --output library.idx
-moon run cmd/moonecho -- index --input clip.wav --output library.idx --id 2 --append
-moon run cmd/moonecho -- match --index track.idx --input clip.wav
-moon run cmd/moonecho -- info --index library.idx --json
-moon run cmd/moonecho -- bench --json
+moon run cmd/moonecho-cli -- version
+moon run cmd/moonecho-cli -- index --input track.wav --output track.idx --name demo
+moon run cmd/moonecho-cli -- index --manifest tracks.tsv --output library.idx
+moon run cmd/moonecho-cli -- index --input clip.wav --output library.idx --id 2 --append
+moon run cmd/moonecho-cli -- match --index track.idx --input clip.wav
+moon run cmd/moonecho-cli -- info --index library.idx --json
+moon run cmd/moonecho-cli -- bench --json
 ```
 
 WASM browser demo:
@@ -83,7 +83,7 @@ and run the query. The demo requires WebAssembly GC support; see
 Expected CLI output:
 
 ```text
-MoonEcho (月响) v0.1.0: Local-first acoustic fingerprint search and audio alignment toolkit
+MoonEcho (月响) v0.1.1: Local-first acoustic fingerprint search and audio alignment toolkit
 ```
 
 ## Minimal API
@@ -103,7 +103,7 @@ stable local API for the fingerprint pipeline:
 
 ```moonbit nocheck
 ///|
-fn inspect_wav(bytes : Array[Int]) -> Unit raise {
+fn inspect_wav(bytes : Array[Int32]) -> Unit raise {
   let audio = @audio.load_wav_mono(bytes, target_sample_rate=16000)
   println(audio.frame_count())
 }

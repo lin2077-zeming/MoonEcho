@@ -1,0 +1,3 @@
+///|
+/// Project metadata is kept in one leaf package so CLI and examples do not
+/// create a reverse dependency on the module root package.

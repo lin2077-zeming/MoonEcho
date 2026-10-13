@@ -3,10 +3,10 @@
 type HostBytes
 
 ///|
-fn host_bytes_length(bytes : HostBytes) -> Int = "moonecho_host" "bytes_length"
+fn host_bytes_length(bytes : HostBytes) -> Int32 = "moonecho_host" "bytes_length"
 
 ///|
-fn host_bytes_get(bytes : HostBytes, index : Int) -> Int = "moonecho_host" "bytes_get"
+fn host_bytes_get(bytes : HostBytes, index : Int32) -> Int32 = "moonecho_host" "bytes_get"
 
 ///|
 priv suberror DemoError {
@@ -18,18 +18,18 @@ priv suberror DemoError {
 ///|
 priv struct DemoState {
   mut index : @index.FingerprintIndex
-  mut track_samples : Map[Int, Array[Double]]
-  mut last_status : Int
-  mut last_track_id : Int
-  mut last_offset_frames : Int
-  mut last_offset_samples : Int
+  mut track_samples : Map[Int32, Array[Double]]
+  mut last_status : Int32
+  mut last_track_id : Int32
+  mut last_offset_frames : Int32
+  mut last_offset_samples : Int32
   mut last_confidence : Double
   mut last_correlation : Double
-  mut last_votes : Int
-  mut last_query_hashes : Int
-  mut last_considered_postings : Int
-  mut last_candidate_count : Int
-  mut last_error : Int
+  mut last_votes : Int32
+  mut last_query_hashes : Int32
+  mut last_considered_postings : Int32
+  mut last_candidate_count : Int32
+  mut last_error : Int32
 }
 
 ///|
@@ -83,8 +83,8 @@ fn reset_web_state() -> Unit {
 }
 
 ///|
-fn host_bytes_array(bytes : HostBytes) -> Array[Int] {
-  let output : Array[Int] = []
+fn host_bytes_array(bytes : HostBytes) -> Array[Int32] {
+  let output : Array[Int32] = []
   let length = host_bytes_length(bytes)
   for index in 0..<length {
     output.push(host_bytes_get(bytes, index))
@@ -143,7 +143,7 @@ fn fingerprint_for_profile(
 }
 
 ///|
-fn status_code(status : @match.MatchStatus) -> Int {
+fn status_code(status : @match.MatchStatus) -> Int32 {
   match status {
     Strong => 2
     Weak => 1
@@ -153,14 +153,14 @@ fn status_code(status : @match.MatchStatus) -> Int {
 
 ///|
 #export_name("moonecho_demo_reset")
-pub fn demo_reset() -> Int {
+pub fn demo_reset() -> Int32 {
   reset_web_state()
   0
 }
 
 ///|
 #export_name("moonecho_demo_index_track")
-pub fn demo_index_track(track_id : Int, bytes : HostBytes) -> Int {
+pub fn demo_index_track(track_id : Int32, bytes : HostBytes) -> Int32 {
   if track_id <= 0 {
     web_state.last_error = 2
     return 1
@@ -193,7 +193,7 @@ pub fn demo_index_track(track_id : Int, bytes : HostBytes) -> Int {
 
 ///|
 #export_name("moonecho_demo_match")
-pub fn demo_match(bytes : HostBytes) -> Int {
+pub fn demo_match(bytes : HostBytes) -> Int32 {
   if web_state.index.track_count() == 0 {
     web_state.last_error = 5
     return 1
@@ -290,31 +290,31 @@ pub fn demo_match(bytes : HostBytes) -> Int {
 
 ///|
 #export_name("moonecho_demo_track_count")
-pub fn demo_track_count() -> Int {
+pub fn demo_track_count() -> Int32 {
   web_state.index.track_count()
 }
 
 ///|
 #export_name("moonecho_demo_posting_count")
-pub fn demo_posting_count() -> Int {
+pub fn demo_posting_count() -> Int32 {
   web_state.index.posting_count()
 }
 
 ///|
 #export_name("moonecho_demo_last_status")
-pub fn demo_last_status() -> Int {
+pub fn demo_last_status() -> Int32 {
   web_state.last_status
 }
 
 ///|
 #export_name("moonecho_demo_last_track_id")
-pub fn demo_last_track_id() -> Int {
+pub fn demo_last_track_id() -> Int32 {
   web_state.last_track_id
 }
 
 ///|
 #export_name("moonecho_demo_last_offset_frames")
-pub fn demo_last_offset_frames() -> Int {
+pub fn demo_last_offset_frames() -> Int32 {
   web_state.last_offset_frames
 }
 
@@ -339,30 +339,30 @@ pub fn demo_last_correlation() -> Double {
 
 ///|
 #export_name("moonecho_demo_last_votes")
-pub fn demo_last_votes() -> Int {
+pub fn demo_last_votes() -> Int32 {
   web_state.last_votes
 }
 
 ///|
 #export_name("moonecho_demo_last_query_hashes")
-pub fn demo_last_query_hashes() -> Int {
+pub fn demo_last_query_hashes() -> Int32 {
   web_state.last_query_hashes
 }
 
 ///|
 #export_name("moonecho_demo_last_considered_postings")
-pub fn demo_last_considered_postings() -> Int {
+pub fn demo_last_considered_postings() -> Int32 {
   web_state.last_considered_postings
 }
 
 ///|
 #export_name("moonecho_demo_last_candidate_count")
-pub fn demo_last_candidate_count() -> Int {
+pub fn demo_last_candidate_count() -> Int32 {
   web_state.last_candidate_count
 }
 
 ///|
 #export_name("moonecho_demo_last_error")
-pub fn demo_last_error() -> Int {
+pub fn demo_last_error() -> Int32 {
   web_state.last_error
 }

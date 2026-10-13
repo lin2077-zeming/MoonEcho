@@ -1,17 +1,17 @@
 ///|
 pub(all) struct MatchConfig {
-  top_k : Int
-  min_votes : Int
+  top_k : Int32
+  min_votes : Int32
   min_confidence : Double
   min_margin : Double
 }
 
 ///|
 pub(all) struct MatchCandidate {
-  track_id : Int
+  track_id : Int32
   name : String
-  offset_frames : Int
-  votes : Int
+  offset_frames : Int32
+  votes : Int32
   confidence : Double
   margin : Double
 }
@@ -27,8 +27,8 @@ pub(all) enum MatchStatus {
 pub(all) struct MatchResult {
   status : MatchStatus
   candidates : Array[MatchCandidate]
-  query_hash_count : Int
-  considered_postings : Int
+  query_hash_count : Int32
+  considered_postings : Int32
 }
 
 ///|
@@ -54,10 +54,10 @@ pub fn status_label(status : MatchStatus) -> String {
 
 ///|
 pub fn MatchConfig::new(
-  top_k? : Int = 5,
-  min_votes? : Int = 3,
-  min_confidence? : Double = 0.05,
-  min_margin? : Double = 0.0,
+  top_k~ : Int32 = 5,
+  min_votes~ : Int32 = 3,
+  min_confidence~ : Double = 0.05,
+  min_margin~ : Double = 0.0,
 ) -> MatchConfig raise MatchError {
   if top_k <= 0 {
     raise InvalidArgument("top_k must be positive")
@@ -94,7 +94,7 @@ pub fn match_fingerprint(
       considered_postings: 0,
     }
   }
-  let votes : Map[(Int, Int), Int] = Map([])
+  let votes : Map[(Int32, Int32), Int32] = Map([])
   let mut considered_postings = 0
   for item in query.hashes {
     let postings = index.lookup(item.hash)
@@ -109,7 +109,7 @@ pub fn match_fingerprint(
       votes.set(key, next)
     }
   }
-  let best_by_track : Map[Int, (Int, Int)] = Map([])
+  let best_by_track : Map[Int32, (Int32, Int32)] = Map([])
   for entry in votes.iter() {
     let key = entry.0
     let vote_count = entry.1
@@ -123,7 +123,7 @@ pub fn match_fingerprint(
       best_by_track.set(track_id, (offset, vote_count))
     }
   }
-  let ranked : Array[(Int, Int, Int)] = []
+  let ranked : Array[(Int32, Int32, Int32)] = []
   for entry in best_by_track.iter() {
     ranked.push((entry.0, entry.1.0, entry.1.1))
   }
@@ -170,7 +170,10 @@ pub fn match_fingerprint(
 }
 
 ///|
-fn compare_ranked(left : (Int, Int, Int), right : (Int, Int, Int)) -> Int {
+fn compare_ranked(
+  left : (Int32, Int32, Int32),
+  right : (Int32, Int32, Int32),
+) -> Int32 {
   if left.2 != right.2 {
     right.2 - left.2
   } else {
@@ -191,7 +194,7 @@ fn hash_config_equal(
 }
 
 ///|
-fn track_name(index : @index.FingerprintIndex, track_id : Int) -> String {
+fn track_name(index : @index.FingerprintIndex, track_id : Int32) -> String {
   for track in index.tracks {
     if track.track_id == track_id {
       return track.name

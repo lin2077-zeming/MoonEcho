@@ -10,8 +10,8 @@ fn test_config() -> @fingerprint.HashConfig {
 
 ///|
 fn test_fingerprint(
-  frame_count : Int,
-  bin_count : Int,
+  frame_count : Int32,
+  bin_count : Int32,
   hashes : Array[@fingerprint.FingerprintHash],
 ) -> @fingerprint.AudioFingerprint {
   {
@@ -179,13 +179,13 @@ fn v1_empty_snapshot() -> Bytes {
 }
 
 ///|
-fn push_u16(out : Array[Byte], value : Int) -> Unit {
+fn push_u16(out : Array[Byte], value : Int32) -> Unit {
   out.push((value & 0xff).to_byte())
   out.push(((value >> 8) & 0xff).to_byte())
 }
 
 ///|
-fn push_u32(out : Array[Byte], value : Int) -> Unit {
+fn push_u32(out : Array[Byte], value : Int32) -> Unit {
   for byte_index in 0..<4 {
     out.push(((value >> (byte_index * 8)) & 0xff).to_byte())
   }

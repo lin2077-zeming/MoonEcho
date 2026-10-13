@@ -1,7 +1,7 @@
 name: CI
 
 env:
-  MOONBIT_VERSION: 0.10.14+7d59c7ec9
+  MOONBIT_VERSION: 0.10.15+943464bfa
 
 on:
   push:
@@ -44,6 +44,12 @@ jobs:
       - name: Build all supported targets
         run: moon build --target all --release --deny-warn
 
+      - name: Build native CLI
+        run: moon build cmd/moonecho-cli --target native --release --deny-warn
+
+      - name: Smoke-test CLI exit codes
+        run: npm run smoke:cli
+
       - name: Test wasm target
         run: moon test --target wasm --deny-warn
 
@@ -56,4 +62,4 @@ jobs:
           npm run smoke:demo
 
       - name: Run CLI
-        run: moon run cmd/moonecho
+        run: moon run cmd/moonecho-cli

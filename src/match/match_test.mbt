@@ -6,10 +6,10 @@ fn match_config() -> @fingerprint.HashConfig {
 ///|
 fn hash(
   value : UInt64,
-  anchor_frame : Int,
-  anchor_bin : Int,
-  delta_frames : Int,
-  target_bin : Int,
+  anchor_frame : Int32,
+  anchor_bin : Int32,
+  delta_frames : Int32,
+  target_bin : Int32,
 ) -> @fingerprint.FingerprintHash {
   { hash: value, anchor_frame, anchor_bin, delta_frames, target_bin, }
 }

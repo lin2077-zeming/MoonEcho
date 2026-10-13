@@ -1,15 +1,15 @@
 ///|
 pub(all) struct AlignConfig {
-  search_radius_samples : Int
-  window_samples : Int
+  search_radius_samples : Int32
+  window_samples : Int32
 }
 
 ///|
 pub(all) struct AlignmentResult {
-  rough_offset_samples : Int
-  refined_offset_samples : Int
+  rough_offset_samples : Int32
+  refined_offset_samples : Int32
   correlation : Double
-  evaluated_lags : Int
+  evaluated_lags : Int32
 }
 
 ///|
@@ -26,8 +26,8 @@ pub fn error_message(error : AlignError) -> String {
 
 ///|
 pub fn AlignConfig::new(
-  search_radius_samples? : Int = 512,
-  window_samples? : Int = 4096,
+  search_radius_samples~ : Int32 = 512,
+  window_samples~ : Int32 = 4096,
 ) -> AlignConfig raise AlignError {
   if search_radius_samples < 0 {
     raise InvalidArgument("search_radius_samples must be non-negative")
@@ -42,7 +42,7 @@ pub fn AlignConfig::new(
 pub fn refine_offset(
   track : ArrayView[Double],
   query : ArrayView[Double],
-  rough_offset_samples : Int,
+  rough_offset_samples : Int32,
   config : AlignConfig,
 ) -> AlignmentResult raise AlignError {
   if track.length() == 0 || query.length() == 0 {
@@ -92,8 +92,8 @@ pub fn refine_offset(
 fn correlation_at(
   track : ArrayView[Double],
   query : ArrayView[Double],
-  lag : Int,
-  overlap : Int,
+  lag : Int32,
+  overlap : Int32,
 ) -> Double {
   let mut sum_track = 0.0
   let mut sum_query = 0.0
@@ -125,8 +125,8 @@ fn correlation_at(
 fn track_value(
   track : ArrayView[Double],
   query : ArrayView[Double],
-  lag : Int,
-  index : Int,
+  lag : Int32,
+  index : Int32,
 ) -> Double {
   ignore(query)
   if lag >= 0 {
@@ -140,8 +140,8 @@ fn track_value(
 fn query_value(
   track : ArrayView[Double],
   query : ArrayView[Double],
-  lag : Int,
-  index : Int,
+  lag : Int32,
+  index : Int32,
 ) -> Double {
   ignore(track)
   if lag >= 0 {
@@ -153,11 +153,11 @@ fn query_value(
 
 ///|
 fn overlap_length(
-  track_length : Int,
-  query_length : Int,
-  lag : Int,
-  window_samples : Int,
-) -> Int {
+  track_length : Int32,
+  query_length : Int32,
+  lag : Int32,
+  window_samples : Int32,
+) -> Int32 {
   let available = if lag >= 0 {
     let track_available = track_length - lag
     let query_available = query_length
@@ -183,14 +183,18 @@ fn overlap_length(
 }
 
 ///|
-fn offset_for_lag(track_length : Int, query_length : Int, lag : Int) -> Int {
+fn offset_for_lag(
+  track_length : Int32,
+  query_length : Int32,
+  lag : Int32,
+) -> Int32 {
   ignore(track_length)
   ignore(query_length)
   lag
 }
 
 ///|
-fn abs_int(value : Int) -> Int {
+fn abs_int(value : Int32) -> Int32 {
   if value < 0 {
     -value
   } else {

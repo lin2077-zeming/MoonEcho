@@ -1,5 +1,5 @@
 ///|
-pub let fingerprint_version : Int = 1
+pub let fingerprint_version : Int32 = 1
 
 ///|
 pub fn magic() -> Bytes {
@@ -8,27 +8,27 @@ pub fn magic() -> Bytes {
 
 ///|
 pub(all) struct HashConfig {
-  fan_out : Int
-  min_delta_frames : Int
-  max_delta_frames : Int
-  max_frequency_distance : Int
+  fan_out : Int32
+  min_delta_frames : Int32
+  max_delta_frames : Int32
+  max_frequency_distance : Int32
   hash_seed : UInt64
 }
 
 ///|
 pub(all) struct FingerprintHash {
   hash : UInt64
-  anchor_frame : Int
-  anchor_bin : Int
-  delta_frames : Int
-  target_bin : Int
+  anchor_frame : Int32
+  anchor_bin : Int32
+  delta_frames : Int32
+  target_bin : Int32
 }
 
 ///|
 pub(all) struct AudioFingerprint {
-  version : Int
-  frame_count : Int
-  bin_count : Int
+  version : Int32
+  frame_count : Int32
+  bin_count : Int32
   config : HashConfig
   hashes : Array[FingerprintHash]
 }
@@ -37,7 +37,7 @@ pub(all) struct AudioFingerprint {
 pub suberror FingerprintError {
   InvalidArgument(String)
   InvalidMagic
-  UnsupportedVersion(Int)
+  UnsupportedVersion(Int32)
   Truncated(String)
   InvalidLength(String)
   ChecksumMismatch(UInt64, UInt64)
@@ -58,11 +58,11 @@ pub fn error_message(error : FingerprintError) -> String {
 
 ///|
 pub fn HashConfig::new(
-  fan_out? : Int = 5,
-  min_delta_frames? : Int = 1,
-  max_delta_frames? : Int = 64,
-  max_frequency_distance? : Int = 32,
-  hash_seed? : UInt64 = 0x9E3779B97F4A7C15UL,
+  fan_out~ : Int32 = 5,
+  min_delta_frames~ : Int32 = 1,
+  max_delta_frames~ : Int32 = 64,
+  max_frequency_distance~ : Int32 = 32,
+  hash_seed~ : UInt64 = 0x9E3779B97F4A7C15UL,
 ) -> HashConfig raise FingerprintError {
   if fan_out <= 0 {
     raise InvalidArgument("fan_out must be positive")
@@ -89,8 +89,8 @@ pub fn HashConfig::new(
 pub fn fingerprint(
   peaks : Array[@spectrum.SpectralPeak],
   config : HashConfig,
-  frame_count~ : Int,
-  bin_count~ : Int,
+  frame_count~ : Int32,
+  bin_count~ : Int32,
 ) -> AudioFingerprint raise FingerprintError {
   if frame_count <= 0 {
     raise InvalidArgument("frame_count must be positive")
@@ -248,9 +248,9 @@ fn frequency_distance_allowed(
 
 ///|
 fn pair_hash(
-  anchor_bin : Int,
-  target_bin : Int,
-  delta_frames : Int,
+  anchor_bin : Int32,
+  target_bin : Int32,
+  delta_frames : Int32,
   seed : UInt64,
 ) -> UInt64 {
   let mut hash = seed
@@ -282,7 +282,7 @@ fn sort_spectral_peaks(
 fn compare_spectral_peaks(
   left : @spectrum.SpectralPeak,
   right : @spectrum.SpectralPeak,
-) -> Int {
+) -> Int32 {
   if left.frame != right.frame {
     left.frame - right.frame
   } else if left.bin != right.bin {
@@ -309,7 +309,7 @@ fn write_magic(out : Array[Byte]) -> Unit {
 }
 
 ///|
-fn encode_frequency_distance(distance : Int) -> Int {
+fn encode_frequency_distance(distance : Int32) -> Int32 {
   if distance < 0 {
     0
   } else {
@@ -318,7 +318,7 @@ fn encode_frequency_distance(distance : Int) -> Int {
 }
 
 ///|
-fn decode_frequency_distance(value : Int) -> Int {
+fn decode_frequency_distance(value : Int32) -> Int32 {
   if value == 0 {
     -1
   } else {
@@ -327,13 +327,13 @@ fn decode_frequency_distance(value : Int) -> Int {
 }
 
 ///|
-fn push_u16_le(out : Array[Byte], value : Int) -> Unit {
+fn push_u16_le(out : Array[Byte], value : Int32) -> Unit {
   out.push((value & 0xff).to_byte())
   out.push(((value >> 8) & 0xff).to_byte())
 }
 
 ///|
-fn push_u32_le(out : Array[Byte], value : Int) -> Unit {
+fn push_u32_le(out : Array[Byte], value : Int32) -> Unit {
   for byte_index in 0..<4 {
     out.push(((value >> (byte_index * 8)) & 0xff).to_byte())
   }
@@ -347,13 +347,13 @@ fn push_u64_le(out : Array[Byte], value : UInt64) -> Unit {
 }
 
 ///|
-fn read_u16_le(bytes : Bytes, offset : Int) -> Int raise FingerprintError {
+fn read_u16_le(bytes : Bytes, offset : Int32) -> Int32 raise FingerprintError {
   require_bytes(bytes, offset, 2)
   bytes[offset].to_int() | (bytes[offset + 1].to_int() << 8)
 }
 
 ///|
-fn read_u32_le(bytes : Bytes, offset : Int) -> Int raise FingerprintError {
+fn read_u32_le(bytes : Bytes, offset : Int32) -> Int32 raise FingerprintError {
   require_bytes(bytes, offset, 4)
   bytes[offset].to_int() |
   (bytes[offset + 1].to_int() << 8) |
@@ -362,7 +362,7 @@ fn read_u32_le(bytes : Bytes, offset : Int) -> Int raise FingerprintError {
 }
 
 ///|
-fn read_u64_le(bytes : Bytes, offset : Int) -> UInt64 raise FingerprintError {
+fn read_u64_le(bytes : Bytes, offset : Int32) -> UInt64 raise FingerprintError {
   require_bytes(bytes, offset, 8)
   let mut value = 0UL
   for byte_index in 0..<8 {
@@ -374,8 +374,8 @@ fn read_u64_le(bytes : Bytes, offset : Int) -> UInt64 raise FingerprintError {
 ///|
 fn require_bytes(
   bytes : Bytes,
-  offset : Int,
-  length : Int,
+  offset : Int32,
+  length : Int32,
 ) -> Unit raise FingerprintError {
   if offset < 0 || length < 0 || offset + length > bytes.length() {
     raise Truncated(
@@ -385,7 +385,7 @@ fn require_bytes(
 }
 
 ///|
-fn checksum_bytes(bytes : Bytes, length : Int) -> UInt64 {
+fn checksum_bytes(bytes : Bytes, length : Int32) -> UInt64 {
   let mut checksum = 0xcbf29ce484222325UL
   for index in 0..<length {
     checksum = (checksum ^ bytes[index].to_uint64()) * 0x100000001B3UL

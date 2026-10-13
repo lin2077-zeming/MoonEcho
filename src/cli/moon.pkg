@@ -7,6 +7,6 @@ import {
   "lin2077-zeming/moonecho/src/fingerprint",
   "lin2077-zeming/moonecho/src/index",
   "lin2077-zeming/moonecho/src/match",
+  "lin2077-zeming/moonecho/src/project",
   "lin2077-zeming/moonecho/src/spectrum",
-  "lin2077-zeming/moonecho",
 }
