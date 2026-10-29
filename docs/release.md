@@ -8,7 +8,7 @@ https://mooncakes.io/docs/#/lin2077-zeming/moonecho/
 
 The machine-readable status endpoint is:
 
-`https://mooncakes.io/api-new/v0/modules/lin2077-zeming/moonecho`
+`https://mooncakes.io/api/v0/modules/lin2077-zeming/moonecho`
 
 ## Mooncakes.io Preparation
 
