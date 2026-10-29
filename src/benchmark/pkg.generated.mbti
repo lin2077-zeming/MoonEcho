@@ -2,7 +2,7 @@
 package "lin2077-zeming/moonecho/src/benchmark"
 
 // Values
-pub fn benchmark_report(RobustnessConfig, Int) -> BenchmarkReport raise BenchmarkError
+pub fn benchmark_report(RobustnessConfig, Int32) -> BenchmarkReport raise BenchmarkError
 
 pub fn error_message(BenchmarkError) -> String
 
@@ -16,17 +16,17 @@ pub suberror BenchmarkError {
 // Types and methods
 pub(all) struct BenchmarkReport {
   cases : Array[RobustnessCase]
-  correct_hits : Int
-  positive_cases : Int
-  negative_cases : Int
-  negative_hits : Int
+  correct_hits : Int32
+  positive_cases : Int32
+  negative_cases : Int32
+  negative_hits : Int32
   mean_offset_error_frames : Double
-  max_offset_error_frames : Int
+  max_offset_error_frames : Int32
   mean_sample_offset_error : Double
-  max_sample_offset_error : Int
-  hash_count : Int
-  posting_count : Int
-  snapshot_bytes : Int
+  max_sample_offset_error : Int32
+  hash_count : Int32
+  posting_count : Int32
+  snapshot_bytes : Int32
   query_median_us : Double
 }
 
@@ -34,24 +34,24 @@ pub(all) struct RobustnessCase {
   name : String
   top1_hit : Bool
   strong : Bool
-  expected_offset_frames : Int
-  actual_offset_frames : Int
-  offset_error_frames : Int
-  refined_offset_samples : Int
-  sample_offset_error : Int
+  expected_offset_frames : Int32
+  actual_offset_frames : Int32
+  offset_error_frames : Int32
+  refined_offset_samples : Int32
+  sample_offset_error : Int32
 }
 
 pub(all) struct RobustnessConfig {
-  sample_rate : Int
-  window_length : Int
-  hop_size : Int
-  track_frames : Int
-  clip_start : Int
-  clip_frames : Int
-  silence_padding : Int
+  sample_rate : Int32
+  window_length : Int32
+  hop_size : Int32
+  track_frames : Int32
+  clip_start : Int32
+  clip_frames : Int32
+  silence_padding : Int32
   noise_amplitude : Double
 }
-pub fn RobustnessConfig::new(sample_rate? : Int, window_length? : Int, hop_size? : Int, track_frames? : Int, clip_start? : Int, clip_frames? : Int, silence_padding? : Int, noise_amplitude? : Double) -> Self raise BenchmarkError
+pub fn RobustnessConfig::new(sample_rate? : Int32, window_length? : Int32, hop_size? : Int32, track_frames? : Int32, clip_start? : Int32, clip_frames? : Int32, silence_padding? : Int32, noise_amplitude? : Double) -> Self raise BenchmarkError
 
 // Type aliases
 

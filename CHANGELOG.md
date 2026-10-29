@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.4 - 2026-10-29
+
+- Updated the CI and release baseline to MoonBit `0.10.17+d971670cd`,
+  satisfying the final acceptance requirement of `moonc >= 0.10.16`.
+- Revalidated formatting, all-target build, bundle, tests, CLI exit codes,
+  and the WASM demo with the updated toolchain.
+
 ## 0.1.3 - 2026-10-13
 
 - Made the CLI exit-code smoke test discover the native executable on both

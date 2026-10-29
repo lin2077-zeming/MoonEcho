@@ -8,9 +8,9 @@ import {
 // Values
 pub fn apply_gain(@moonwavkit.FloatBuffer, Double) -> @moonwavkit.FloatBuffer raise AudioError
 
-pub fn audio_buffer(Int, Int, Array[Double]) -> @moonwavkit.FloatBuffer raise AudioError
+pub fn audio_buffer(Int32, Int32, Array[Double]) -> @moonwavkit.FloatBuffer raise AudioError
 
-pub fn channels(@moonwavkit.FloatBuffer) -> Int
+pub fn channels(@moonwavkit.FloatBuffer) -> Int32
 
 pub fn downmix(@moonwavkit.FloatBuffer) -> @moonwavkit.FloatBuffer raise AudioError
 
@@ -18,17 +18,17 @@ pub fn duration_seconds(@moonwavkit.FloatBuffer) -> Double
 
 pub fn error_message(AudioError) -> String
 
-pub fn frame_count(@moonwavkit.FloatBuffer) -> Int
+pub fn frame_count(@moonwavkit.FloatBuffer) -> Int32
 
-pub fn load_wav(Array[Int]) -> @moonwavkit.FloatBuffer raise AudioError
+pub fn load_wav(Array[Int32]) -> @moonwavkit.FloatBuffer raise AudioError
 
-pub fn load_wav_mono(Array[Int], target_sample_rate? : Int) -> @moonwavkit.FloatBuffer raise AudioError
+pub fn load_wav_mono(Array[Int32], target_sample_rate? : Int32) -> @moonwavkit.FloatBuffer raise AudioError
 
 pub fn normalize(@moonwavkit.FloatBuffer) -> @moonwavkit.FloatBuffer raise AudioError
 
-pub fn resample(@moonwavkit.FloatBuffer, Int) -> @moonwavkit.FloatBuffer raise AudioError
+pub fn resample(@moonwavkit.FloatBuffer, Int32) -> @moonwavkit.FloatBuffer raise AudioError
 
-pub fn sample_rate(@moonwavkit.FloatBuffer) -> Int
+pub fn sample_rate(@moonwavkit.FloatBuffer) -> Int32
 
 pub fn validate(@moonwavkit.FloatBuffer) -> Bool
 

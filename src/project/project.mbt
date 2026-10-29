@@ -13,7 +13,7 @@ pub fn project_name_zh() -> String {
 ///|
 /// Current project version. Keep this in sync with `moon.mod`.
 pub fn project_version() -> String {
-  "0.1.3"
+  "0.1.4"
 }
 
 ///|

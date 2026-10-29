@@ -23,11 +23,11 @@ pub fn index_magic_v1() -> Bytes
 
 pub fn index_magic_v2() -> Bytes
 
-pub let index_version : Int
+pub let index_version : Int32
 
-pub let index_version_v1 : Int
+pub let index_version_v1 : Int32
 
-pub let index_version_v2 : Int
+pub let index_version_v2 : Int32
 
 pub fn profile_equal(ProcessingProfile, ProcessingProfile) -> Bool
 
@@ -36,9 +36,9 @@ pub fn with_profile(ProcessingProfile) -> FingerprintIndex
 // Errors
 pub suberror IndexError {
   InvalidArgument(String)
-  DuplicateTrack(Int)
+  DuplicateTrack(Int32)
   InvalidMagic
-  UnsupportedVersion(Int)
+  UnsupportedVersion(Int32)
   Truncated(String)
   InvalidLength(String)
   ChecksumMismatch(UInt64, UInt64)
@@ -51,37 +51,37 @@ pub(all) struct FingerprintIndex {
   profile : ProcessingProfile
   tracks : Array[TrackInfo]
   postings : Map[UInt64, Array[IndexPosting]]
-  mut posting_count : Int
+  mut posting_count : Int32
 }
-pub fn FingerprintIndex::add_track(Self, Int, String, @fingerprint.AudioFingerprint) -> Unit raise IndexError
+pub fn FingerprintIndex::add_track(Self, Int32, String, @fingerprint.AudioFingerprint) -> Unit raise IndexError
 pub fn FingerprintIndex::lookup(Self, UInt64) -> Array[IndexPosting]
 pub fn FingerprintIndex::new(@fingerprint.HashConfig) -> Self
-pub fn FingerprintIndex::posting_count(Self) -> Int
-pub fn FingerprintIndex::track_count(Self) -> Int
+pub fn FingerprintIndex::posting_count(Self) -> Int32
+pub fn FingerprintIndex::track_count(Self) -> Int32
 
 pub(all) struct IndexPosting {
-  track_id : Int
-  anchor_frame : Int
-  anchor_bin : Int
-  delta_frames : Int
-  target_bin : Int
+  track_id : Int32
+  anchor_frame : Int32
+  anchor_bin : Int32
+  delta_frames : Int32
+  target_bin : Int32
 }
 
 pub(all) struct ProcessingProfile {
-  sample_rate : Int
-  window_length : Int
-  hop_size : Int
+  sample_rate : Int32
+  window_length : Int32
+  hop_size : Int32
   peak_config : @spectrum.PeakConfig
   hash_config : @fingerprint.HashConfig
 }
-pub fn ProcessingProfile::new(Int, Int, Int, @spectrum.PeakConfig, @fingerprint.HashConfig) -> Self raise IndexError
+pub fn ProcessingProfile::new(Int32, Int32, Int32, @spectrum.PeakConfig, @fingerprint.HashConfig) -> Self raise IndexError
 
 pub(all) struct TrackInfo {
-  track_id : Int
+  track_id : Int32
   name : String
-  frame_count : Int
-  bin_count : Int
-  hash_count : Int
+  frame_count : Int32
+  bin_count : Int32
+  hash_count : Int32
 }
 
 // Type aliases

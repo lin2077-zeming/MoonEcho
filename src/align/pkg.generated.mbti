@@ -4,7 +4,7 @@ package "lin2077-zeming/moonecho/src/align"
 // Values
 pub fn error_message(AlignError) -> String
 
-pub fn refine_offset(ArrayView[Double], ArrayView[Double], Int, AlignConfig) -> AlignmentResult raise AlignError
+pub fn refine_offset(ArrayView[Double], ArrayView[Double], Int32, AlignConfig) -> AlignmentResult raise AlignError
 
 // Errors
 pub suberror AlignError {
@@ -13,16 +13,16 @@ pub suberror AlignError {
 
 // Types and methods
 pub(all) struct AlignConfig {
-  search_radius_samples : Int
-  window_samples : Int
+  search_radius_samples : Int32
+  window_samples : Int32
 }
-pub fn AlignConfig::new(search_radius_samples? : Int, window_samples? : Int) -> Self raise AlignError
+pub fn AlignConfig::new(search_radius_samples? : Int32, window_samples? : Int32) -> Self raise AlignError
 
 pub(all) struct AlignmentResult {
-  rough_offset_samples : Int
-  refined_offset_samples : Int
+  rough_offset_samples : Int32
+  refined_offset_samples : Int32
   correlation : Double
-  evaluated_lags : Int
+  evaluated_lags : Int32
 }
 
 // Type aliases

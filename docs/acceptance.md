@@ -62,7 +62,7 @@ generated locally and requires no external audio assets.
 - the native backend does not build the browser-only `src/web` package
 
 The module root is package-free by design. Project metadata lives in
-`src/project`, allowing `moon bundle --all` to operate without the 0.10.15
+`src/project`, allowing `moon bundle --all` to operate without the older
 root-package/core-output collision.
 
 ## Submission State

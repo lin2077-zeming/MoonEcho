@@ -20,27 +20,27 @@ pub suberror MatchError {
 
 // Types and methods
 pub(all) struct MatchCandidate {
-  track_id : Int
+  track_id : Int32
   name : String
-  offset_frames : Int
-  votes : Int
+  offset_frames : Int32
+  votes : Int32
   confidence : Double
   margin : Double
 }
 
 pub(all) struct MatchConfig {
-  top_k : Int
-  min_votes : Int
+  top_k : Int32
+  min_votes : Int32
   min_confidence : Double
   min_margin : Double
 }
-pub fn MatchConfig::new(top_k? : Int, min_votes? : Int, min_confidence? : Double, min_margin? : Double) -> Self raise MatchError
+pub fn MatchConfig::new(top_k? : Int32, min_votes? : Int32, min_confidence? : Double, min_margin? : Double) -> Self raise MatchError
 
 pub(all) struct MatchResult {
   status : MatchStatus
   candidates : Array[MatchCandidate]
-  query_hash_count : Int
-  considered_postings : Int
+  query_hash_count : Int32
+  considered_postings : Int32
 }
 
 pub(all) enum MatchStatus {

@@ -2,7 +2,7 @@
 
 ## Publication Status
 
-The current module version is `0.1.3`. Verify the live publication state with:
+The current module version is `0.1.4`. Verify the live publication state with:
 
 https://mooncakes.io/docs/#/lin2077-zeming/moonecho/
 
@@ -15,7 +15,7 @@ The machine-readable status endpoint is:
 The module metadata is in `moon.mod`:
 
 - module name: `lin2077-zeming/moonecho`
-- version: `0.1.3`
+- version: `0.1.4`
 - license: `Apache-2.0`
 - repository: `https://github.com/lin2077-zeming/MoonEcho`
 - readme: `README.mbt.md`
@@ -39,14 +39,14 @@ moon publish
 Do not publish a version that has already been uploaded. Update `moon.mod` and
 the release notes together when preparing the next version.
 
-With the pinned `moonc` `0.10.15+943464bfa`, `moon publish --dry-run` reports
+With the pinned `moonc` `0.10.17+d971670cd`, `moon publish --dry-run` reports
 `Server status: 202 Accepted` and a successful server-side dry run, but the
 command currently exits non-zero afterward. Treat the server status text as the
 validation result for that toolchain, and use the real authenticated publish
 command only after the package and CI checks are green.
 
 The module intentionally has no root package. Project metadata lives in
-`src/project`; this avoids the 0.10.15 bundle planner conflict between a root
+`src/project`; this avoids the bundle planner conflict between a root
 library artifact and a child executable package. The CI build gate includes:
 
 ```bash
@@ -81,8 +81,8 @@ The release candidate is ready when:
 After the release checks pass:
 
 ```bash
-git tag -a v0.1.3 -m "MoonEcho v0.1.3"
-git push origin v0.1.3
+git tag -a v0.1.4 -m "MoonEcho v0.1.4"
+git push origin v0.1.4
 ```
 
 The tag is a marker only. The Mooncakes.io version comes from `moon.mod`.

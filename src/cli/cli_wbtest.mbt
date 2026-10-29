@@ -90,7 +90,7 @@ test "match rejects profile-conflicting options" {
 
 ///|
 test "run version and help" {
-  assert_eq(try! run(["moonecho", "version"]), "MoonEcho v0.1.3")
+  assert_eq(try! run(["moonecho", "version"]), "MoonEcho v0.1.4")
   assert_true(try! run(["moonecho", "help"]).contains("moonecho index"))
 }
 

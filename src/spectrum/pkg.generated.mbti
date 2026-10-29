@@ -25,28 +25,28 @@ pub suberror SpectrumError {
 
 // Types and methods
 pub(all) struct PeakConfig {
-  frequency_radius : Int
-  time_radius : Int
+  frequency_radius : Int32
+  time_radius : Int32
   min_magnitude : Double
   relative_threshold : Double
-  max_peaks_per_frame : Int
+  max_peaks_per_frame : Int32
 }
-pub fn PeakConfig::new(frequency_radius? : Int, time_radius? : Int, min_magnitude? : Double, relative_threshold? : Double, max_peaks_per_frame? : Int) -> Self raise SpectrumError
+pub fn PeakConfig::new(frequency_radius? : Int32, time_radius? : Int32, min_magnitude? : Double, relative_threshold? : Double, max_peaks_per_frame? : Int32) -> Self raise SpectrumError
 
 pub(all) struct SpectralPeak {
-  frame : Int
-  bin : Int
+  frame : Int32
+  bin : Int32
   time : Double
   frequency : Double
   magnitude : Double
 }
 
 pub(all) struct SpectrumConfig {
-  window_length : Int
-  hop_size : Int
+  window_length : Int32
+  hop_size : Int32
   window_kind : @MoonSpectrum.WindowKind
 }
-pub fn SpectrumConfig::new(window_length? : Int, hop_size? : Int, window_kind? : @MoonSpectrum.WindowKind) -> Self raise SpectrumError
+pub fn SpectrumConfig::new(window_length? : Int32, hop_size? : Int32, window_kind? : @MoonSpectrum.WindowKind) -> Self raise SpectrumError
 
 // Type aliases
 pub using @MoonSpectrum {type Peak}
